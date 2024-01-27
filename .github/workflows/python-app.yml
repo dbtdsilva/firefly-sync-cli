@@ -1,4 +1,4 @@
-name: python-build-n-test
+name: "Python build and test"
 
 on: [push]
 
