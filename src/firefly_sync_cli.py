@@ -9,6 +9,7 @@ __version__ = "1.0.0"
 
 MANDATORY_ENV_KEYS = ["FIREFLY_URL", "FIREFLY_TOKEN"]
 
+
 def load_config():
     env_values = dotenv_values(".env")
     if not all(mandatory_key in env_values.keys() for mandatory_key in MANDATORY_ENV_KEYS):

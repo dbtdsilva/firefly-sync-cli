@@ -10,8 +10,10 @@ class AccountApi:
         self.token = token
 
     def _default_headers(self):
-        return { "Accept": "application/json",
-                 "Authorization": "Bearer " + self.token }
+        return {
+            "Accept": "application/json",
+            "Authorization": "Bearer " + self.token
+        }
 
     def get_accounts(self, type: AccountType):
         url = self.base_url + 'accounts'
@@ -26,4 +28,3 @@ class AccountApi:
             result = page_request.json()
             data.extend(result['data'])
         return data
-            
