@@ -1,8 +1,8 @@
 from enum import auto
-from strenum import StrEnum
+from strenum import LowercaseStrEnum
 
 
-class AccountType(StrEnum):
+class AccountType(LowercaseStrEnum):
     ALL = auto()
     ASSET = auto()
     CASH = auto()

@@ -1,5 +1,3 @@
-import requests
-
 from ..models.account_type import AccountType
 from .base_api import BaseApi
 

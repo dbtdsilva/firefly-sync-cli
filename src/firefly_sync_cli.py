@@ -1,6 +1,7 @@
 import argparse
 from dotenv import dotenv_values
 import sys
+from datetime import datetime, timedelta
 
 from firefly_api.api import FireflyApi
 from firefly_api.models.account_type import AccountType
@@ -23,7 +24,11 @@ def main(args: argparse.Namespace):
     env_values = load_config()
 
     api = FireflyApi(env_values["FIREFLY_URL"], env_values["FIREFLY_TOKEN"])
-    print(len(api.accounts.get_accounts(AccountType.ASSET)))
+    accounts = api.accounts.get_accounts(AccountType.ASSET)
+    print(len(accounts))
+
+    api.transactions.get_transactions(start_date=datetime.now() - timedelta(days=1000), end_date=datetime.now())
+    print(accounts[0])
 
 
 if __name__ == "__main__":

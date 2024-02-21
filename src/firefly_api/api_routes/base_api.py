@@ -21,6 +21,7 @@ class BaseApi(ABC):
         return f'{self.base_url}/{endpoint}'
 
     def get(self, endpoint, params=None):
+        print(params)
         response = self.session.get(self._url(endpoint), params=params)
         return self._get_all_pages(response)
 
@@ -29,6 +30,7 @@ class BaseApi(ABC):
         data = result['data']
         while 'links' in result and 'next' in result['links']:
             page_request = self.session.get(result['links']['next'])
+            print(result['links']['next'])
             result = page_request.json()
             data.extend(result['data'])
         return data
