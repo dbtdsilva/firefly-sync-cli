@@ -10,7 +10,7 @@ class BcvParser(Parser):
 
     @staticmethod
     def parse(file: str) -> List[ParsedTransaction]:
-        data = Parser.read_table_from_excel(file_path=file, start_text='Execution date')
+        data = Parser.read_table_from_excel(file=file, start_text='Execution date')
         # Now data contains the parsed CSV data
         transactions = []
         for row in data:

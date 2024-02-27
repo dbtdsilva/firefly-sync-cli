@@ -1,4 +1,3 @@
-import csv
 import logging
 from typing import List
 from datetime import datetime
@@ -11,14 +10,7 @@ class SwisscardCsv(Parser):
 
     @staticmethod
     def parse(file: str) -> List[ParsedTransaction]:
-        data = []
-        with open(file, newline='') as csvfile:
-            csvreader = csv.reader(csvfile)
-            headers = next(csvreader)  # Read the header row
-            for row in csvreader:
-                parsed_row = {header: value for header, value in zip(headers, row)}
-                data.append(parsed_row)
-
+        data = Parser.read_table_from_csv(file)
         # Now data contains the parsed CSV data
         transactions = []
         for row in data:

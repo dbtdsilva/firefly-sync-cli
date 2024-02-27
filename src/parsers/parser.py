@@ -1,5 +1,6 @@
 import openpyxl
 import warnings
+import csv
 from abc import ABC, abstractmethod
 from typing import List
 
@@ -14,9 +15,9 @@ class Parser(ABC):
         pass
     
     @staticmethod
-    def read_table_from_excel(file_path, start_text):
+    def read_table_from_excel(file, start_text):
         warnings.filterwarnings('ignore', category=UserWarning, module='openpyxl')
-        wb = openpyxl.load_workbook(file_path)
+        wb = openpyxl.load_workbook(file)
         sheet = wb.active
 
         # Find the starting row and column of the table
@@ -42,4 +43,15 @@ class Parser(ABC):
             data_row = {headers[i]: cell.value for i, cell in enumerate(row)}
             data.append(data_row)
 
+        return data
+    
+    @staticmethod
+    def read_table_from_csv(file):
+        data = []
+        with open(file, newline='') as csvfile:
+            csvreader = csv.reader(csvfile)
+            headers = next(csvreader)  # Read the header row
+            for row in csvreader:
+                parsed_row = {header: value for header, value in zip(headers, row)}
+                data.append(parsed_row)
         return data
