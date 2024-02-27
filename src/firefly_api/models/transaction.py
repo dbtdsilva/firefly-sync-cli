@@ -18,9 +18,9 @@ class Transaction(BaseModel):
     budget_id: Optional[int] = None
     category_id: Optional[int] = None
     category_name: Optional[str] = None
-    source_id: int
+    source_id: Optional[int] = None
     source_name: Optional[str] = None
-    destination_id: int
+    destination_id: Optional[int] = None
     destination_name: Optional[str] = None
     reconciled: Optional[bool] = None
     piggy_bank_id: Optional[int] = None

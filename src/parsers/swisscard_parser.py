@@ -1,13 +1,15 @@
 import csv
 import logging
 from typing import List
+from datetime import datetime
 
-from ..firefly_api.models.transaction import Transaction
+from ..firefly_api.models.transaction import Transaction, TransactionType
+from .parser import Parser
 
-class SwisscardCsv:
+class SwisscardCsv(Parser):
 
     @staticmethod
-    def parse_csv(file: str) -> List[Transaction]:
+    def parse(file: str) -> List[Transaction]:
         data = []
         with open(file, newline='') as csvfile:
             csvreader = csv.reader(csvfile)
@@ -17,12 +19,33 @@ class SwisscardCsv:
                 data.append(parsed_row)
 
         # Now data contains the parsed CSV data
+        transactions = []
         for row in data:
-            transaction_date = row['Transaction date']
+            transaction_date = datetime.strptime(row['Transaction date'], '%d.%m.%Y')
             description = row['Description']
             currency = row['Currency']
-            amount = row['Amount']
+            amount = float(row['Amount'])
             debit_or_credit = row['Debit/Credit']
             status = row['Status']
-            category = row['Category']
-            logging.info(f"Transaction: {transaction_date, description, currency, amount, debit_or_credit, status, category}") 
+            # category = row['Category']
+
+            if status != 'Posted':
+                logging.warning(f'Skipping transaction in {file}, it has the status {status}')
+            if debit_or_credit == 'Debit':
+                transaction_type = TransactionType.WITHDRAWAL
+                source_name = 'Poinz (Swisscard)'
+                destination_name = 'Unidentified'
+            elif debit_or_credit == 'Credit':
+                transaction_type = TransactionType.DEPOSIT
+                source_name = 'Unidentified'
+                destination_name = 'Poinz (Swisscard)'
+                amount = abs(amount)
+            else:
+                raise Exception(f'Invalid transaction type in {file}: {debit_or_credit}')
+
+            transactions.append(Transaction(type=transaction_type, source_name=source_name, 
+                                            destination_name=destination_name,
+                                            date=transaction_date, amount=amount, 
+                                            description=description, currency_code=currency, 
+                                            reconciled=True))
+        return transactions
