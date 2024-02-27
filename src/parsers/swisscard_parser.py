@@ -3,13 +3,14 @@ import logging
 from typing import List
 from datetime import datetime
 
-from ..firefly_api.models.transaction import Transaction, TransactionType
+from .types.parsed_transaction import ParsedTransaction
+from .types.parsed_transaction_type import ParsedTransactionType
 from .parser import Parser
 
 class SwisscardCsv(Parser):
 
     @staticmethod
-    def parse(file: str) -> List[Transaction]:
+    def parse(file: str) -> List[ParsedTransaction]:
         data = []
         with open(file, newline='') as csvfile:
             csvreader = csv.reader(csvfile)
@@ -32,20 +33,14 @@ class SwisscardCsv(Parser):
             if status != 'Posted':
                 logging.warning(f'Skipping transaction in {file}, it has the status {status}')
             if debit_or_credit == 'Debit':
-                transaction_type = TransactionType.WITHDRAWAL
-                source_name = 'Poinz (Swisscard)'
-                destination_name = 'Unidentified'
+                transaction_type = ParsedTransactionType.DEBIT
             elif debit_or_credit == 'Credit':
-                transaction_type = TransactionType.DEPOSIT
-                source_name = 'Unidentified'
-                destination_name = 'Poinz (Swisscard)'
+                transaction_type = ParsedTransactionType.CREDIT
                 amount = abs(amount)
             else:
                 raise Exception(f'Invalid transaction type in {file}: {debit_or_credit}')
 
-            transactions.append(Transaction(type=transaction_type, source_name=source_name, 
-                                            destination_name=destination_name,
-                                            date=transaction_date, amount=amount, 
-                                            description=description, currency_code=currency, 
-                                            reconciled=True))
+            transactions.append(ParsedTransaction(
+                type=transaction_type, date=transaction_date, amount=amount, 
+                description=description, currency_code=currency))
         return transactions

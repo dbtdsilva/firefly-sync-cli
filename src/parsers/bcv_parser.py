@@ -1,12 +1,11 @@
-import csv
-import logging
 from typing import List
 from datetime import datetime
 import openpyxl
 import numbers
 
-from ..firefly_api.models.transaction import Transaction, TransactionType
 from .parser import Parser
+from .types.parsed_transaction import ParsedTransaction
+from .types.parsed_transaction_type import ParsedTransactionType
 
 class BcvParser(Parser):
 
@@ -41,7 +40,7 @@ class BcvParser(Parser):
         return data
 
     @staticmethod
-    def parse(file: str) -> List[Transaction]:
+    def parse(file: str) -> List[ParsedTransaction]:
         data = BcvParser.read_table_from_excel(file_path=file, start_text='Execution date')
         # Now data contains the parsed CSV data
         transactions = []
@@ -56,18 +55,12 @@ class BcvParser(Parser):
                 raise Exception(f'Invalid debit / credit in {file}')
             elif debit is not None:
                 amount = debit
-                transaction_type = TransactionType.WITHDRAWAL
-                source_name = 'BCV Prive Privilege'
-                destination_name = 'Unidentified'
+                transaction_type = ParsedTransactionType.DEBIT
             elif credit is not None:
                 amount = credit
-                transaction_type = TransactionType.DEPOSIT
-                source_name = 'Unidentified'
-                destination_name = 'BCV Prive Privilege'
+                transaction_type = ParsedTransactionType.CREDIT
 
-            transactions.append(Transaction(type=transaction_type, source_name=source_name, 
-                                            destination_name=destination_name,
-                                            date=transaction_date, amount=amount, 
-                                            description=description, currency_code='CHF', 
-                                            reconciled=True))
+            transactions.append(ParsedTransaction(
+                type=transaction_type, amount=amount, description=description,
+                date=transaction_date, currency_code='CHF'))
         return transactions
