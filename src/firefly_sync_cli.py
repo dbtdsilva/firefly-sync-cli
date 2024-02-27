@@ -29,7 +29,7 @@ class FireflySyncCli:
     def __load_config(self):
         env_values = dotenv_values(".env")
         if not all(mandatory_key in env_values.keys() for mandatory_key in MANDATORY_ENV_KEYS):
-            print('Values are missing from .env')
+            logging.error('Values are missing from .env')
             sys.exit(1)
         return env_values
 
@@ -73,7 +73,7 @@ class FireflySyncCli:
             logging.warning(f'Failed to find load parser module for file "{file}" with account "{account.name}"')
             return
         
-        print(parser_module.parse(file))
+        parsed_transactions = parser_module.parse(file)
 
         
 

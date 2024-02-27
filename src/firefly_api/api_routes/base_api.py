@@ -24,7 +24,6 @@ class BaseApi(ABC):
         return f'{self.base_url}/{endpoint}'
 
     def get(self, endpoint, params=None):
-        print(params)
         response = self.session.get(self._url(endpoint), params=params)
         return self._get_all_pages(response)
 
