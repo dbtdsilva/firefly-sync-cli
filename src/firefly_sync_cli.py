@@ -74,6 +74,7 @@ class FireflySyncCli:
             return
         
         parsed_transactions = parser_module.parse(file)
+        print(len(parsed_transactions))
 
         
 

@@ -1,6 +1,5 @@
 from typing import List
 from datetime import datetime
-import openpyxl
 import numbers
 
 from .parser import Parser
@@ -10,38 +9,8 @@ from .types.parsed_transaction_type import ParsedTransactionType
 class BcvParser(Parser):
 
     @staticmethod
-    def read_table_from_excel(file_path, start_text):
-        wb = openpyxl.load_workbook(file_path)
-        sheet = wb.active
-
-        # Find the starting row and column of the table
-        start_row = None
-        start_col = None
-        for row in sheet.iter_rows():
-            if row[0].value == start_text:
-                start_row = row[0].row
-                start_col = row[0].column
-                break
-
-        if not start_row or not start_col:
-            raise ValueError("Could not find table starting with 'Execution date'")
-
-        # Extract headers
-        headers = [cell.value for cell in sheet[start_row]]
-
-        # Extract data and convert to dictionaries
-        data = []
-        for row in sheet.iter_rows():
-            if row[0].row <= start_row:
-                continue
-            data_row = {headers[i]: cell.value for i, cell in enumerate(row)}
-            data.append(data_row)
-
-        return data
-
-    @staticmethod
     def parse(file: str) -> List[ParsedTransaction]:
-        data = BcvParser.read_table_from_excel(file_path=file, start_text='Execution date')
+        data = Parser.read_table_from_excel(file_path=file, start_text='Execution date')
         # Now data contains the parsed CSV data
         transactions = []
         for row in data:
