@@ -3,6 +3,7 @@ import logging
 from typing import List
 from datetime import datetime
 import openpyxl
+import numbers
 
 from ..firefly_api.models.transaction import Transaction, TransactionType
 from .parser import Parser
@@ -47,8 +48,8 @@ class BcvParser(Parser):
         for row in data:
             transaction_date = datetime.strptime(row['Execution date'], '%d.%m.%Y')
             description = row['Transactions']
-            debit = row['Debit'] if type(row['Debit']) is float else None
-            credit = row['Credit'] if type(row['Credit']) is float else None
+            debit = row['Debit'] if isinstance(row['Debit'], numbers.Number) else None
+            credit = row['Credit'] if isinstance(row['Credit'], numbers.Number) else None
 
             if (debit is not None and credit is not None) or \
                 (debit is None and credit is None):
