@@ -6,7 +6,7 @@ from .transaction_type import TransactionType
 
 
 class Transaction(BaseModel):
-    id: str
+    id: str = None
     type: TransactionType
     date: datetime
     amount: float

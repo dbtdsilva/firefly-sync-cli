@@ -1,15 +1,21 @@
 from types import ModuleType
 from typing import Tuple
 from dotenv import dotenv_values
+from datetime import datetime, date as dt
 import sys
 import re
 import os
 import logging
 import importlib
-from src.firefly_api.models.transaction import Transaction
+import hashlib
 
-from src.parsers.types.parsed_transaction import ParsedTransaction
-
+from .firefly_api.models.attachment import Attachment
+from .firefly_api.models.attachable_type import AttachableType
+from .firefly_api.models.tag import Tag
+from .firefly_api.models.transaction import Transaction
+from .firefly_api.models.transaction_type import TransactionType
+from .parsers.types.parsed_transaction import ParsedTransaction
+from .parsers.types.parsed_transaction_type import ParsedTransactionType
 
 from .firefly_api.api import FireflyApi
 from .firefly_api.models.account_type import AccountType
@@ -47,14 +53,23 @@ class FireflySyncCli:
 
         imported_transactions = []
         for parsed_transaction in parsed_transactions:
-            transaction = self.__map_transaction_to_firefly(parsed_transaction)
+            transaction = self.__map_transaction_to_firefly(account, parsed_transaction)
             if transaction.internal_reference in stored_transactions_by_reference:
                 found_transaction = stored_transactions_by_reference[transaction.internal_reference]
                 logging.warning(f'Parsed transaction was already stored with id {found_transaction.id} \
                                 (reference: {found_transaction.internal_reference}). Parsed: {parsed_transaction}')
                 continue
             imported_transactions.append(transaction)
-        print(len(imported_transactions))
+
+        has_duplicate_references = len({obj.internal_reference for obj in imported_transactions}) != len(imported_transactions)
+        if has_duplicate_references:
+            logging.error(f'Parsed transactions contain duplicated rows, please verify the file {file}')
+            return
+
+        self.__create_tag_for_import(file, account, start_date, end_date)
+
+        #print(len(imported_transactions))
+        #print(imported_transactions[0])
         # self.api.transactions.store_transactions(imported_transactions)
 
     def __load_config(self):
@@ -92,5 +107,44 @@ class FireflySyncCli:
         except ModuleNotFoundError:
             return None
 
-    def __map_transaction_to_firefly(self, parsed_transaction: ParsedTransaction) -> Transaction:
-        pass
+    def __map_transaction_to_firefly(self, account: Account, parsed_transaction: ParsedTransaction) -> Transaction:
+        default_unknown_account = "Unidentified"
+        if parsed_transaction.type == ParsedTransactionType.DEBIT:
+            transaction_type = TransactionType.WITHDRAWAL
+            source_name = account.name
+            destination_name = default_unknown_account
+        elif parsed_transaction.type == ParsedTransactionType.CREDIT:
+            transaction_type = TransactionType.DEPOSIT
+            source_name = default_unknown_account
+            destination_name = account.name
+
+        currency_code = account.currency_code if parsed_transaction.currency_code is None else \
+            parsed_transaction.currency_code
+        internal_reference = self.__generate_hash_for_transaction(parsed_transaction)
+
+        return Transaction(
+            source_name=source_name,
+            destination_name=destination_name,
+            description=parsed_transaction.description,
+            amount=parsed_transaction.amount,
+            date=parsed_transaction.date,
+            currency_code=currency_code,
+            type=transaction_type,
+            internal_reference=internal_reference)
+
+    def __generate_hash_for_transaction(self, parsed_transaction: ParsedTransaction) -> str:
+        data = (f"{parsed_transaction.type},{parsed_transaction.date},{parsed_transaction.amount},"
+                f"{parsed_transaction.description},{parsed_transaction.currency_code}")
+        hash_object = hashlib.sha256(data.encode())
+        return hash_object.hexdigest()
+
+    def __create_tag_for_import(self, file: str, account: Account, start_date: datetime, end_date: datetime) -> Tag:
+        tag = self.api.tags.create_tag(Tag(
+            tag=f'import_{account.id}_{start_date.strftime("%Y%m%d")}_{end_date.strftime("%Y%m%d")}',
+            date=dt.today(),
+            description=f'Imported file "{file}" to the account "{account.name}" (from {start_date} to {end_date})'))
+
+        self.api.attachments.create_attachment(
+            attachment=Attachment(filename=os.path.basename(file), attachable_type=AttachableType.TAG, attachable_id=tag.id),
+            file_path=file)
+        return tag

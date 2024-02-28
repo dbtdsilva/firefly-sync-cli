@@ -12,6 +12,7 @@ class BaseApi(ABC):
         self.session = session
 
         self.base_url = base_url
+        self.token = token
         self.session.headers.update(self._default_headers(token))
 
     def _default_headers(self, token):
@@ -49,10 +50,19 @@ class BaseApi(ABC):
 
     def post(self, endpoint, json_value=None):
         response = self.session.post(self._url(endpoint), json=json_value)
-        if response.status_code != 200:
+        if response.status_code != 200 and response.status_code != 204:
             logging.error(f'Failed to POST {endpoint}, received {response.status_code}: {response.json()}')
             response.raise_for_status()
         return response.json()
+
+    def post_with_files(self, endpoint, data):
+        response = self.session.post(self._url(endpoint), data=data, headers={
+            'Content-Type': 'application/octet-stream',
+            'Authorization': f'Bearer {self.token}'
+        })
+        if response.status_code != 204:
+            logging.error(f'Failed to POST {endpoint}, received {response.status_code}: {response.json()}')
+            response.raise_for_status()
 
     def put(self, endpoint, json_value=None):
         response = self.session.put(self._url(endpoint), json=json_value)

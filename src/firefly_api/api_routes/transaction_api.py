@@ -28,4 +28,4 @@ class TransactionApi(BaseApi):
             'group_title': None,
             'transactions': [transaction.model_dump(exclude_none=True, mode='json')]
         })
-        return Transaction(**data['data']['attributes']['transactions'][0])
+        return Transaction(id=data['data']['id'], **data['data']['attributes']['transactions'][0])
