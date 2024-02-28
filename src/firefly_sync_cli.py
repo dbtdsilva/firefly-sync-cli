@@ -58,8 +58,8 @@ class FireflySyncCli:
             transaction = self.__map_transaction_to_firefly(parsed_transaction, account, tag)
             if transaction.internal_reference in stored_transactions_by_reference:
                 found_transaction = stored_transactions_by_reference[transaction.internal_reference]
-                logging.warning(f'Parsed transaction was already stored with id {found_transaction.id} \
-                                (reference: {found_transaction.internal_reference}). Parsed: {parsed_transaction}')
+                logging.warning(f'Parsed transaction was already stored with id {found_transaction.id} '
+                                f'(reference: {found_transaction.internal_reference}). Parsed: {parsed_transaction}')
                 continue
             imported_transactions.append(transaction)
 
