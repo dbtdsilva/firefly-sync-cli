@@ -29,7 +29,7 @@ class TransactionApi(BaseApi):
 
     def store_transaction(self, transaction: Transaction) -> Transaction:
         data = self.post('/', {
-            'error_if_duplicate_hash': True,
+            'error_if_duplicate_hash': False,
             'apply_rules': True,
             'fire_webhooks': True,
             'group_title': None,
