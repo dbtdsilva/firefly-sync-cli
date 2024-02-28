@@ -9,15 +9,13 @@ from ..models.transaction import Transaction
 
 class TransactionApi(BaseApi):
 
-    DATE_FORMAT = '%Y-%m-%d'
-
     def __init__(self, session: Session, base_url: str, token: str) -> None:
         super().__init__(session, f'{base_url}/api/v1/transactions', token)
 
     def get_transactions(self, start_date: datetime, end_date: datetime) -> List[Transaction]:
-        data = self.get('/', params={'start': start_date.strftime(TransactionApi.DATE_FORMAT), 
-                                     'end': end_date.strftime(TransactionApi.DATE_FORMAT)})
-        return [Transaction(**item['attributes']['transactions'][0]) for item in data]
+        data = self.get('/', params={'start': start_date.strftime(BaseApi.DATE_FORMAT), 
+                                     'end': end_date.strftime(BaseApi.DATE_FORMAT)})
+        return [Transaction(id=item['id'], **item['attributes']['transactions'][0]) for item in data]
 
     def store_transactions(self, transactions: List[Transaction]) -> List[Transaction]:
         return [ self.store_transaction(transaction) for transaction in transactions ]

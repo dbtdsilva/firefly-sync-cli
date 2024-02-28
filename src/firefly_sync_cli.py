@@ -7,6 +7,9 @@ import re
 import os
 import logging
 import importlib
+from src.firefly_api.models.transaction import Transaction
+
+from src.parsers.types.parsed_transaction import ParsedTransaction
 
 
 from .firefly_api.api import FireflyApi
@@ -63,6 +66,9 @@ class FireflySyncCli:
             return None
         except ModuleNotFoundError:
             return None
+        
+    def __map_transaction_to_firefly(self, parsed_transaction: ParsedTransaction) -> Transaction:
+        pass
 
     def import_file(self, file: str):
         account, parser_module = self.__find_account_matching_file(file)
@@ -74,12 +80,21 @@ class FireflySyncCli:
             return
         
         parsed_transactions = parser_module.parse(file)
-        print(len(parsed_transactions))
-
+        start_date = min(t.date for t in parsed_transactions)
+        end_date = max(t.date for t in parsed_transactions)
+        stored_transactions = self.api.accounts.get_account_transactions(
+            account_id=account.id, start_date=start_date, end_date=end_date)
         
+        stored_transactions_by_reference = { t.internal_reference: t for t in stored_transactions if t.internal_reference is not None }
 
-        #api.transactions.get_transactions(start_date=datetime.now() - timedelta(days=1000), end_date=datetime.now())
-
-        #transactions = SwisscardCsv.parse_csv('dist/swisscard_november_2023_SC-Transactions_2024-02-21_22-53-33.csv')
-        #transactions = BcvParser.parse_excel('dist/bcv_main_TRANSACTIONS LIST [21-02-2024].xlsx')
-        #api.transactions.store_transactions(transactions)
+        imported_transactions = []
+        for parsed_transaction in parsed_transactions:
+            transaction = self.__map_transaction_to_firefly(parsed_transaction)
+            if transaction.internal_reference in stored_transactions_by_reference:
+                found_transaction = stored_transactions_by_reference[transaction.internal_reference]
+                logging.warning(f'Parsed transaction was already stored with id {found_transaction.id} 
+                                (reference: {found_transaction.internal_reference}). Parsed: {parsed_transaction}')
+                continue
+            imported_transactions.append(transaction)
+        
+        # self.api.transactions.store_transactions(imported_transactions)

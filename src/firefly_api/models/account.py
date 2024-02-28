@@ -6,6 +6,7 @@ from pydantic import BaseModel
 from .account_type import AccountType
 
 class Account(BaseModel):
+    id: str
     created_at: Optional[datetime]
     updated_at: Optional[datetime]
     active: Optional[bool]

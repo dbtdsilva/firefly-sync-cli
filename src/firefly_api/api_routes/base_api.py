@@ -4,6 +4,8 @@ import logging
 from requests import Session
 
 class BaseApi(ABC):
+
+    DATE_FORMAT = '%Y-%m-%d'
     
     def __init__(self, session: Session, base_url: str, token: str) -> None:
         self.session = session
@@ -27,11 +29,18 @@ class BaseApi(ABC):
         response = self.session.get(self._url(endpoint), params=params)
         return self._get_all_pages(response)
 
-    def _get_all_pages(self, request):
-        result = request.json()
+    def _get_all_pages(self, response):
+        if response.status_code != 200:
+            logging.error(f'Failed to GET {response.request.url}, received {response.status_code}: {response.json()}')
+            response.raise_for_status()
+        result = response.json()
+
         data = result['data']
         while 'links' in result and 'next' in result['links']:
             page_request = self.session.get(result['links']['next'])
+            if page_request.status_code != 200:
+                logging.error(f'Failed to GET {page_request.request.url}, received {page_request.status_code}: {page_request.json()}')
+                page_request.raise_for_status()
             result = page_request.json()
             data.extend(result['data'])
         return data
