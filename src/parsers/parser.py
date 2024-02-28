@@ -13,7 +13,7 @@ class Parser(ABC):
     @abstractmethod
     def parse(file) -> List[ParsedTransaction]:
         pass
-    
+
     @staticmethod
     def read_table_from_excel(file, start_text):
         warnings.filterwarnings('ignore', category=UserWarning, module='openpyxl')
@@ -44,7 +44,7 @@ class Parser(ABC):
             data.append(data_row)
 
         return data
-    
+
     @staticmethod
     def read_table_from_csv(file):
         data = []

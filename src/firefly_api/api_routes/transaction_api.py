@@ -13,12 +13,12 @@ class TransactionApi(BaseApi):
         super().__init__(session, f'{base_url}/api/v1/transactions', token)
 
     def get_transactions(self, start_date: datetime, end_date: datetime) -> List[Transaction]:
-        data = self.get('/', params={'start': start_date.strftime(BaseApi.DATE_FORMAT), 
+        data = self.get('/', params={'start': start_date.strftime(BaseApi.DATE_FORMAT),
                                      'end': end_date.strftime(BaseApi.DATE_FORMAT)})
         return [Transaction(id=item['id'], **item['attributes']['transactions'][0]) for item in data]
 
     def store_transactions(self, transactions: List[Transaction]) -> List[Transaction]:
-        return [ self.store_transaction(transaction) for transaction in transactions ]
+        return [self.store_transaction(transaction) for transaction in transactions]
 
     def store_transaction(self, transaction: Transaction) -> Transaction:
         data = self.post('/', {
@@ -26,7 +26,6 @@ class TransactionApi(BaseApi):
             'apply_rules': True,
             'fire_webhooks': True,
             'group_title': None,
-            'transactions': [ transaction.model_dump(exclude_none=True, mode='json') ]
+            'transactions': [transaction.model_dump(exclude_none=True, mode='json')]
         })
         return Transaction(**data['data']['attributes']['transactions'][0])
-        

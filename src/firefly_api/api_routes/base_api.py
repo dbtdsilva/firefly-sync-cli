@@ -3,10 +3,11 @@ import logging
 
 from requests import Session
 
+
 class BaseApi(ABC):
 
     DATE_FORMAT = '%Y-%m-%d'
-    
+
     def __init__(self, session: Session, base_url: str, token: str) -> None:
         self.session = session
 
@@ -19,7 +20,7 @@ class BaseApi(ABC):
             'Content-Type': 'application/json',
             'Authorization': f'Bearer {token}'
         }
-    
+
     def _url(self, endpoint):
         if endpoint == '/':
             return self.base_url
@@ -39,7 +40,8 @@ class BaseApi(ABC):
         while 'links' in result and 'next' in result['links']:
             page_request = self.session.get(result['links']['next'])
             if page_request.status_code != 200:
-                logging.error(f'Failed to GET {page_request.request.url}, received {page_request.status_code}: {page_request.json()}')
+                logging.error(f'Failed to GET {page_request.request.url}, \
+                              received {page_request.status_code}: {page_request.json()}')
                 page_request.raise_for_status()
             result = page_request.json()
             data.extend(result['data'])

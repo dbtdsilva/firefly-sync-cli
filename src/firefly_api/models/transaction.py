@@ -4,6 +4,7 @@ from typing import List, Optional
 from pydantic import BaseModel
 from .transaction_type import TransactionType
 
+
 class Transaction(BaseModel):
     id: str
     type: TransactionType

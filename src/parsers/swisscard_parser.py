@@ -6,6 +6,7 @@ from .types.parsed_transaction import ParsedTransaction
 from .types.parsed_transaction_type import ParsedTransactionType
 from .parser import Parser
 
+
 class SwisscardCsv(Parser):
 
     @staticmethod
@@ -33,6 +34,6 @@ class SwisscardCsv(Parser):
                 raise Exception(f'Invalid transaction type in {file}: {debit_or_credit}')
 
             transactions.append(ParsedTransaction(
-                type=transaction_type, date=transaction_date, amount=amount, 
+                type=transaction_type, date=transaction_date, amount=amount,
                 description=description, currency_code=currency))
         return transactions
