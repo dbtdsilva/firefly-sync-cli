@@ -34,6 +34,7 @@ class FireflySyncCli:
         self.api = FireflyApi(env_values["FIREFLY_URL"], env_values["FIREFLY_TOKEN"])
 
     def import_file(self, file: str):
+        logging.info(f'Importing file "{file}"')
         account, parser_module = self.__find_account_matching_file(file)
         if account is None:
             logging.warning(f'Failed to find a valid account for file "{file}"')
@@ -51,9 +52,10 @@ class FireflySyncCli:
         stored_transactions_by_reference = {t.internal_reference: t for t in stored_transactions
                                             if t.internal_reference is not None}
 
+        tag = self.__create_tag_for_import(file, account, start_date, end_date)
         imported_transactions = []
         for parsed_transaction in parsed_transactions:
-            transaction = self.__map_transaction_to_firefly(account, parsed_transaction)
+            transaction = self.__map_transaction_to_firefly(parsed_transaction, account, tag)
             if transaction.internal_reference in stored_transactions_by_reference:
                 found_transaction = stored_transactions_by_reference[transaction.internal_reference]
                 logging.warning(f'Parsed transaction was already stored with id {found_transaction.id} \
@@ -66,11 +68,7 @@ class FireflySyncCli:
             logging.error(f'Parsed transactions contain duplicated rows, please verify the file {file}')
             return
 
-        self.__create_tag_for_import(file, account, start_date, end_date)
-
-        #print(len(imported_transactions))
-        #print(imported_transactions[0])
-        # self.api.transactions.store_transactions(imported_transactions)
+        self.api.transactions.store_transactions(imported_transactions)
 
     def __load_config(self):
         env_values = dotenv_values(".env")
@@ -107,7 +105,7 @@ class FireflySyncCli:
         except ModuleNotFoundError:
             return None
 
-    def __map_transaction_to_firefly(self, account: Account, parsed_transaction: ParsedTransaction) -> Transaction:
+    def __map_transaction_to_firefly(self, parsed_transaction: ParsedTransaction, account: Account, tag: Tag) -> Transaction:
         default_unknown_account = "Unidentified"
         if parsed_transaction.type == ParsedTransactionType.DEBIT:
             transaction_type = TransactionType.WITHDRAWAL
@@ -130,7 +128,8 @@ class FireflySyncCli:
             date=parsed_transaction.date,
             currency_code=currency_code,
             type=transaction_type,
-            internal_reference=internal_reference)
+            internal_reference=internal_reference,
+            tags=[tag.tag])
 
     def __generate_hash_for_transaction(self, parsed_transaction: ParsedTransaction) -> str:
         data = (f"{parsed_transaction.type},{parsed_transaction.date},{parsed_transaction.amount},"
