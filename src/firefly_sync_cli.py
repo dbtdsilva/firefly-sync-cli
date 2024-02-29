@@ -73,9 +73,14 @@ class FireflySyncCli:
 
     def __load_config(self):
         env_values = dotenv_values(".env")
-        if not all(mandatory_key in env_values.keys() for mandatory_key in MANDATORY_ENV_KEYS):
-            logging.error('Values are missing from .env')
-            sys.exit(1)
+        for mandatory_key in MANDATORY_ENV_KEYS:
+            if mandatory_key not in env_values:
+                env_value = os.environ.get(mandatory_key)
+                if env_value is not None:
+                    env_values[mandatory_key] = env_value
+                else:
+                    logging.error(f'Values are missing from environment {mandatory_key}')
+                    sys.exit(1)
         return env_values
 
     def __find_account_matching_file(self, file: str) -> Tuple[Account, ModuleType]:
