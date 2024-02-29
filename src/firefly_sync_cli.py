@@ -33,7 +33,7 @@ class FireflySyncCli:
         env_values = self.__load_config()
         self.api = FireflyApi(env_values["FIREFLY_URL"], env_values["FIREFLY_TOKEN"])
 
-    def import_file(self, file: str):
+    def import_file(self, file: str, dry_run: bool):
         logging.info(f'Importing file "{file}"')
         account, parser_module = self.__find_account_matching_file(file)
         if account is None:
@@ -52,7 +52,8 @@ class FireflySyncCli:
         stored_transactions_by_reference = {t.internal_reference: t for t in stored_transactions
                                             if t.internal_reference is not None}
 
-        tag = self.__create_tag_for_import(file, account, start_date, end_date)
+        tag = self.__create_tag_for_import(file, account, start_date, end_date) if not dry_run else None
+
         imported_transactions = []
         for parsed_transaction in parsed_transactions:
             transaction = self.__map_transaction_to_firefly(parsed_transaction, account, tag)
@@ -63,12 +64,8 @@ class FireflySyncCli:
                 continue
             imported_transactions.append(transaction)
 
-        has_duplicate_references = len({obj.internal_reference for obj in imported_transactions}) != len(imported_transactions)
-        if has_duplicate_references:
-            logging.error(f'Parsed transactions contain duplicated rows, please verify the file {file}')
-            return
-
-        self.api.transactions.store_transactions(imported_transactions)
+        if not dry_run:
+            self.api.transactions.store_transactions(imported_transactions)
 
     def __load_config(self):
         env_values = dotenv_values(".env")
@@ -89,8 +86,8 @@ class FireflySyncCli:
                 logging.warning(f'Skipping account match, no notes with sync: {accounts[0].name}')
                 continue
 
-            match_filename = sync_note.group(1)
-            match_parser_module = sync_note.group(2)
+            match_filename = sync_note.group(1).strip()
+            match_parser_module = sync_note.group(2).strip()
             if file_basename.startswith(match_filename) and (match is None or len(match[0]) < match_filename):
                 match = (match_filename, account, match_parser_module)
         return (match[1], self.__retrieve_module(match[2])) if match is not None else (None, None)
@@ -129,7 +126,7 @@ class FireflySyncCli:
             currency_code=currency_code,
             type=transaction_type,
             internal_reference=internal_reference,
-            tags=[tag.tag])
+            tags=[tag.tag] if tag is not None else [])
 
     def __generate_hash_for_transaction(self, parsed_transaction: ParsedTransaction) -> str:
         data = (f"{parsed_transaction.type},{parsed_transaction.date},{parsed_transaction.amount},"

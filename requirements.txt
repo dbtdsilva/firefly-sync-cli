@@ -5,3 +5,4 @@ flake8==7.0.0
 pytest==7.4.4
 pydantic==2.5.3
 openpyxl==3.1.2
+dotenv==1.0.1
