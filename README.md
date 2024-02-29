@@ -20,7 +20,6 @@ firefly-sync-cli:
         - FIREFLY_TOKEN=<YOUR_TOKEN_HERE>
     volumes:
         - <YOUR_PATH_FOR_UPLOADS>:/app/uploads
-    network_mode: firefly
     restart: always
 ```
 
@@ -62,7 +61,6 @@ firefly-sync-cli:
         - FIREFLY_TOKEN=<YOUR_TOKEN_HERE>
     volumes:
         - <YOUR_PATH_FOR_REPO>:/app
-    network_mode: firefly
     restart: always
 ```
 
