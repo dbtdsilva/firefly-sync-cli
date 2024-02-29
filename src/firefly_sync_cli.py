@@ -33,8 +33,17 @@ class FireflySyncCli:
         logging.basicConfig()
         logging.root.setLevel(logging.DEBUG)
 
+        formatter = logging.Formatter('[%(asctime)s %(name)s-%(threadName)s %(levelname)s] %(message)s')
+        for handler in logging.root.handlers:
+            handler.setFormatter(formatter)
+
         env_values = self.__load_config()
         self.api = FireflyApi(env_values["FIREFLY_URL"], env_values["FIREFLY_TOKEN"])
+
+    def watch_directory(self, path: str):
+        if not os.path.isdir(path):
+            logging.error(f'Path is not a directory: {path}')
+        # TODO: Added logic to check for new files
 
     def import_file(self, file: str, dry_run: bool):
         logging.info(f'Importing file "{file}"')
