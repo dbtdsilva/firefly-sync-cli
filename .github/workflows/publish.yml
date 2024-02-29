@@ -1,0 +1,22 @@
+name: Build and Push Docker Image
+
+on:    
+  release:
+      types: [published]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Publish to Registry
+      uses: elgohr/Publish-Docker-Github-Action@v5
+      with:
+        tag_names: true
+        tag_semver: true
+        name: dbtdsilva/firefly-sync-cli
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+        registry: ghcr.io
