@@ -1,6 +1,7 @@
 import logging
 import os
 import shutil
+import traceback
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
@@ -18,12 +19,12 @@ class FireflySyncWatcher:
         observer.schedule(FireflySyncWatcherHandler(firefly_sync_cli), path=path, recursive=False)
         observer.start()
 
-        while True:
-            try:
-                pass
-            except KeyboardInterrupt:
-                logging.info("Requested to stop watcher.")
-                break
+        try:
+            observer.join()
+        except KeyboardInterrupt:
+            logging.info("Requested to stop watcher.")
+            observer.stop()
+        observer.join()
 
 
 class FireflySyncWatcherHandler(FileSystemEventHandler):
@@ -33,12 +34,21 @@ class FireflySyncWatcherHandler(FileSystemEventHandler):
         self.firefly_sync_cli = firefly_sync_cli
 
     def on_moved(self, event):
-        self.import_and_move_file(event.dest_path.strip())
+        self.safe_import_and_move_file(event.dest_path.strip())
 
     def on_created(self, event):
-        self.import_and_move_file(event.src_path.strip())
+        self.safe_import_and_move_file(event.src_path.strip())
+
+    def safe_import_and_move_file(self, file_path):
+        try:
+            self.import_and_move_file(file_path=file_path)
+        except Exception as e:  # noqa: F841
+            logging.error(traceback.format_exc())
 
     def import_and_move_file(self, file_path):
+        if not os.path.exists(file_path):
+            return
+
         folder_path, file_name = os.path.split(file_path)
         if file_name == 'done':
             return

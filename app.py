@@ -6,12 +6,9 @@ from src.firefly_sync_watcher import FireflySyncWatcher
 
 
 def init_logging():
-    logging.basicConfig()
-    logging.root.setLevel(logging.DEBUG)
-
-    formatter = logging.Formatter('[%(asctime)s %(name)s-%(threadName)s %(levelname)s] %(message)s')
-    for handler in logging.root.handlers:
-        handler.setFormatter(formatter)
+    logging.basicConfig(format='[%(asctime)s %(name)s-%(threadName)s %(levelname)s] %(message)s',
+                        level=logging.INFO)
+    logging.getLogger('urllib3.connectionpool').setLevel(logging.DEBUG)
 
 
 if __name__ == "__main__":
