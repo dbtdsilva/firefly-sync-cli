@@ -9,4 +9,4 @@ class ParsedTransaction(BaseModel):
     date: datetime
     amount: float
     description: str
-    currency_code: str
+    currency_code: str = None

@@ -70,7 +70,7 @@ class Parser(ABC):
             return value
 
         if capitalize:
-            value = value.capitalize()
+            value = value.title()
         value = re.sub(' +', ' ', value.strip())
         if value == '':
             return None
