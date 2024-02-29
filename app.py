@@ -26,7 +26,7 @@ if __name__ == "__main__":
     parser.add_argument("--dry-run",
                         action=argparse.BooleanOptionalAction,
                         help="Execute import as dry-run (it will not persist anything)",
-                        default=True)
+                        default=False)
     myargs = parser.parse_args()
 
     firefly_sync_cli = FireflySyncCli(myargs.dry_run)
