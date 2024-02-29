@@ -29,31 +29,20 @@ MANDATORY_ENV_KEYS = ["FIREFLY_URL", "FIREFLY_TOKEN"]
 
 class FireflySyncCli:
 
-    def __init__(self) -> None:
-        logging.basicConfig()
-        logging.root.setLevel(logging.DEBUG)
-
-        formatter = logging.Formatter('[%(asctime)s %(name)s-%(threadName)s %(levelname)s] %(message)s')
-        for handler in logging.root.handlers:
-            handler.setFormatter(formatter)
-
+    def __init__(self, dry_run: bool) -> None:
         env_values = self.__load_config()
         self.api = FireflyApi(env_values["FIREFLY_URL"], env_values["FIREFLY_TOKEN"])
+        self.dry_run = dry_run
 
-    def watch_directory(self, path: str):
-        if not os.path.isdir(path):
-            logging.error(f'Path is not a directory: {path}')
-        # TODO: Added logic to check for new files
-
-    def import_file(self, file: str, dry_run: bool):
+    def import_file(self, file: str) -> bool:
         logging.info(f'Importing file "{file}"')
         account, parser_module = self.__find_account_matching_file(file)
         if account is None:
             logging.warning(f'Failed to find a valid account for file "{file}"')
-            return
+            return False
         elif parser_module is None:
             logging.warning(f'Failed to find load parser module for file "{file}" with account "{account.name}"')
-            return
+            return False
 
         parsed_transactions = parser_module.parse(file)
         start_date = min(t.date for t in parsed_transactions)
@@ -64,7 +53,7 @@ class FireflySyncCli:
         stored_transactions_by_reference = {t.internal_reference: t for t in stored_transactions
                                             if t.internal_reference is not None}
 
-        tag = self.__create_tag_for_import(file, account, start_date, end_date) if not dry_run else None
+        tag = self.__create_tag_for_import(file, account, start_date, end_date) if not self.dry_run else None
 
         imported_transactions = []
         for parsed_transaction in parsed_transactions:
@@ -76,10 +65,11 @@ class FireflySyncCli:
                 continue
             imported_transactions.append(transaction)
 
-        if not dry_run:
+        if not self.dry_run:
             self.api.transactions.store_transactions(imported_transactions)
         logging.info(f'Finished importing file "{file}" with {len(imported_transactions)} transactions '
                      f'(parsed {len(parsed_transactions)} transactions)')
+        return True
 
     def __load_config(self):
         env_values = dotenv_values(".env")
