@@ -1,0 +1,10 @@
+"TransferWise ID",Date,Amount,Currency,Description,"Payment Reference","Running Balance","Exchange From","Exchange To","Exchange Rate","Payer Name","Payee Name","Payee Account Number",Merchant,"Card Last Four Digits","Card Holder Full Name",Attachment,Note,"Total fees","Exchange To Amount"
+BALANCE-x,19-04-2021,-5000.00,EUR,"Converteu 5000.00 EUR para 5484.01 CHF",,89.72,EUR,CHF,1.10130,,,,,,,,,20.42,5484.01
+TRANSFER-x,19-04-2021,5000.00,EUR,"Dinheiro adicionado ao saldo da moeda",,5089.72,,,,,,,,,,,,0.00,
+BALANCE-x,14-04-2021,-15000.00,EUR,"Converteu 15000.00 EUR para 16469.22 CHF",,89.72,EUR,CHF,1.10245,,,,,,,,,61.25,16469.22
+TRANSFER-x,14-04-2021,7500.00,EUR,"Dinheiro adicionado ao saldo da moeda",,15089.72,,,,,,,,,,,,0.00,
+TRANSFER-x,14-04-2021,7500.00,EUR,"Dinheiro adicionado ao saldo da moeda",,7589.72,,,,,,,,,,,,0.00,
+BALANCE-x,13-04-2021,-10.00,EUR,"Converteu 10.00 EUR para 10.96 CHF",,89.72,EUR,CHF,1.10030,,,,,,,,,0.04,10.96
+TRANSFER-x,11-03-2021,-2900.28,EUR,"Enviou dinheiro para xxx",,99.72,,,,,"xxx",GB96999999999999,,,,,,0.28,
+CARD-x,10-02-2021,-800.00,EUR,"Transação por cartão de 800.00 EUR emitida por Revolut**x* GBR",,3000.00,,,,,,,"Revolut**x* GBR",,,,,0.00,
+TRANSFER-x,26-01-2021,3800.00,EUR,"Dinheiro adicionado ao saldo da moeda",,3800.00,,,,,,,,,,,,0.00,
