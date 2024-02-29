@@ -18,10 +18,10 @@ jobs:
     - name: Publish to Registry
       uses: elgohr/Publish-Docker-Github-Action@v5
       with:
-        name: dbtdsilva/firefly-sync-cli/firefly-sync-cli
+        name: dbtdsilva/firefly-sync-cli
         tag_names: true
         tag_semver: true
         username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
+        password: ${{ github.token }}
         registry: ghcr.io
         tags: "latest,${{ steps.pre-step.outputs.release-version }}"
