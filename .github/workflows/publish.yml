@@ -11,12 +11,17 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
+    - id: pre-step
+      shell: bash
+      run: echo "release-version=$(echo ${GITHUB_REF:10})" >> $GITHUB_OUTPUT
+
     - name: Publish to Registry
       uses: elgohr/Publish-Docker-Github-Action@v5
       with:
+        name: owner/repository/image
         tag_names: true
         tag_semver: true
-        name: dbtdsilva/firefly-sync-cli
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
         registry: ghcr.io
+        tags: "latest,${{ steps.pre-step.outputs.release-version }}"
