@@ -30,6 +30,9 @@ MANDATORY_ENV_KEYS = ["FIREFLY_URL", "FIREFLY_TOKEN"]
 class FireflySyncCli:
 
     def __init__(self) -> None:
+        logging.basicConfig()
+        logging.root.setLevel(logging.DEBUG)
+
         env_values = self.__load_config()
         self.api = FireflyApi(env_values["FIREFLY_URL"], env_values["FIREFLY_TOKEN"])
 
@@ -66,6 +69,8 @@ class FireflySyncCli:
 
         if not dry_run:
             self.api.transactions.store_transactions(imported_transactions)
+        logging.info(f'Finished importing file "{file}" with {len(imported_transactions)} transactions '
+                     f'(parsed {len(parsed_transactions)} transactions)')
 
     def __load_config(self):
         env_values = dotenv_values(".env")
