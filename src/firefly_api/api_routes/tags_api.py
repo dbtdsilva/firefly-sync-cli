@@ -1,5 +1,5 @@
 
-from requests import session
+from requests import HTTPError, session
 from .base_api import BaseApi
 from ..models.tag import Tag
 
@@ -18,5 +18,10 @@ class TagsApi(BaseApi):
         return Tag(id=data['data']['id'], **data['data']['attributes'])
 
     def get_tag(self, tag: Tag) -> Tag:
-        data = self.get(f'{tag.tag}')
-        return Tag(id=data['id'], **data['attributes'])
+        try:
+            data = self.get(f'{tag.tag}')
+            return Tag(id=data['id'], **data['attributes'])
+        except HTTPError as error:
+            if error.response.status_code == 404:
+                return None
+            raise
