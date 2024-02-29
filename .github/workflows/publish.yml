@@ -18,7 +18,7 @@ jobs:
     - name: Publish to Registry
       uses: elgohr/Publish-Docker-Github-Action@v5
       with:
-        name: owner/repository/image
+        name: dbtdsilva/firefly-sync-cli/firefly-sync-cli
         tag_names: true
         tag_semver: true
         username: ${{ github.actor }}
