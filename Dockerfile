@@ -9,4 +9,4 @@ COPY src /app/src
 
 RUN pip install -r requirements.txt
 
-CMD ["sh", "-c", "python app.py --file-watcher-path ${FILE_WATCHER_PATH}"]
+CMD ["sh", "-c", "python app.py --daemon"]
