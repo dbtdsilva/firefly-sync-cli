@@ -2,7 +2,7 @@ import argparse
 import logging
 
 from src.firefly_sync_cli import FireflySyncCli
-from src.firefly_sync_watcher import FireflySyncWatcher
+from src.firefly_sync_daemon import FireflySyncDaemon
 
 
 def init_logging():
@@ -18,16 +18,24 @@ if __name__ == "__main__":
 
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument('--file', help='File to be imported')
-    group.add_argument('--file-watcher-path', help='Path location for the file watcher')
+    group.add_argument('--daemon',
+                       action='store_true',
+                       help='Runs a file watcher and a daily Firefly cronjob',
+                       default=False)
 
     parser.add_argument("--dry-run",
-                        action=argparse.BooleanOptionalAction,
+                        action='store_false',
                         help="Execute import as dry-run (it will not persist anything)",
+                        default=False)
+    parser.add_argument("--no-cron",
+                        action='store_true',
+                        help="Prevents cron from being executed when using --daemon",
                         default=False)
     myargs = parser.parse_args()
 
     firefly_sync_cli = FireflySyncCli(myargs.dry_run)
-    if myargs.file_watcher_path:
-        FireflySyncWatcher.watch_path(firefly_sync_cli, myargs.file_watcher_path)
+    if myargs.daemon:
+        firefly_sync_daemon = FireflySyncDaemon(firefly_sync_cli, myargs.no_cron)
+        firefly_sync_daemon.start()
     else:
         firefly_sync_cli.import_file(myargs.file)

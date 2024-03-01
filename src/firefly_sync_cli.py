@@ -1,8 +1,6 @@
 from types import ModuleType
 from typing import Tuple
-from dotenv import dotenv_values
 from datetime import datetime, date as dt
-import sys
 import re
 import os
 import logging
@@ -21,18 +19,23 @@ from .firefly_api.api import FireflyApi
 from .firefly_api.models.account_type import AccountType
 from .firefly_api.models.account import Account
 from .parsers.parser import Parser
-
-__version__ = "1.0.0"
-
-MANDATORY_ENV_KEYS = ["FIREFLY_URL", "FIREFLY_TOKEN"]
+from .utils.env_mapper import EnvMapper
 
 
 class FireflySyncCli:
 
+    MANDATORY_ENV_KEYS = {
+        "FIREFLY_URL": "http://localhost:8080",
+        "FIREFLY_TOKEN": None
+    }
+
     def __init__(self, dry_run: bool) -> None:
-        env_values = self.__load_config()
-        self.api = FireflyApi(env_values["FIREFLY_URL"], env_values["FIREFLY_TOKEN"])
+        env_values = EnvMapper(FireflySyncCli.MANDATORY_ENV_KEYS)
+        self.api = FireflyApi(env_values.get("FIREFLY_URL"), env_values.get("FIREFLY_TOKEN"))
         self.dry_run = dry_run
+
+    def cron(self):
+        pass
 
     def import_file(self, file: str) -> bool:
         logging.info(f'Importing file "{file}"')
@@ -77,18 +80,6 @@ class FireflySyncCli:
         logging.info(f'Finished importing file "{file}" with {len(imported_transactions)} transactions '
                      f'(parsed {len(parsed_transactions)} transactions)')
         return True
-
-    def __load_config(self):
-        env_values = dotenv_values(".env")
-        for mandatory_key in MANDATORY_ENV_KEYS:
-            if mandatory_key not in env_values:
-                env_value = os.environ.get(mandatory_key)
-                if env_value is not None:
-                    env_values[mandatory_key] = env_value
-                else:
-                    logging.error(f'Values are missing from environment {mandatory_key}')
-                    sys.exit(1)
-        return env_values
 
     def __find_account_matching_file(self, file: str) -> Tuple[Account, ModuleType]:
         file_basename = os.path.basename(file)

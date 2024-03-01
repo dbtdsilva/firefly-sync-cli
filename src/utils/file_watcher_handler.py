@@ -2,32 +2,12 @@ import logging
 import os
 import shutil
 import traceback
-from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
-from .firefly_sync_cli import FireflySyncCli
+from ..firefly_sync_cli import FireflySyncCli
 
 
-class FireflySyncWatcher:
-    @staticmethod
-    def watch_path(firefly_sync_cli: FireflySyncCli, path: str):
-        if not os.path.isdir(path):
-            logging.error(f'Path is not a directory: {path}')
-            return
-
-        observer = Observer()
-        observer.schedule(FireflySyncWatcherHandler(firefly_sync_cli), path=path, recursive=False)
-        observer.start()
-
-        try:
-            observer.join()
-        except KeyboardInterrupt:
-            logging.info("Requested to stop watcher.")
-            observer.stop()
-        observer.join()
-
-
-class FireflySyncWatcherHandler(FileSystemEventHandler):
+class FileWatcherHandler(FileSystemEventHandler):
 
     def __init__(self, firefly_sync_cli: FireflySyncCli) -> None:
         super().__init__()
