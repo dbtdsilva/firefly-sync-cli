@@ -45,6 +45,10 @@ class FireflySyncCli:
             return False
 
         parsed_transactions = parser_module.parse(file)
+        if len(parsed_transactions) == 0:
+            logging.info(f'Finished importing file "{file}" earlier, it had no transactions')
+            return True
+
         start_date = min(t.date for t in parsed_transactions)
         end_date = max(t.date for t in parsed_transactions)
         stored_transactions = self.api.accounts.get_account_transactions(
@@ -57,6 +61,9 @@ class FireflySyncCli:
 
         imported_transactions = []
         for parsed_transaction in parsed_transactions:
+            if parsed_transaction.amount == 0:
+                logging.warning(f'Parsed transaction had an amount of 0. Parsed: {parsed_transaction}')
+                continue
             transaction = self.__map_transaction_to_firefly(parsed_transaction, account, tag)
             if transaction.internal_reference in stored_transactions_by_reference:
                 found_transaction = stored_transactions_by_reference[transaction.internal_reference]
