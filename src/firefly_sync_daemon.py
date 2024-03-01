@@ -11,16 +11,19 @@ import os
 
 class FireflySyncDaemon():
 
-    # Cronjob runs at midnight by default
-    MANDATORY_ENV_KEYS = {
-        "DAEMON_WATCHER_PATH": None,
-        "DAEMON_CRON_EXPRESSION": "0 0 * * *"
-    }
-
     def __init__(self, firefly_sync_cli: FireflySyncCli, disable_cron_job: bool) -> None:
+        # Cronjob runs at midnight by default
+        MANDATORY_ENV_KEYS = {
+            "DAEMON_WATCHER_PATH": None
+        }
+
+        if not disable_cron_job:
+            MANDATORY_ENV_KEYS['DAEMON_CRON_CLI_TOKEN'] = None
+            MANDATORY_ENV_KEYS['DAEMON_CRON_EXPRESSION'] = "0 0 * * *"
+
         self.firefly_sync_cli = firefly_sync_cli
-        self.env_mapper = EnvMapper(FireflySyncDaemon.MANDATORY_ENV_KEYS)
         self.disable_cron_job = disable_cron_job
+        self.env_mapper = EnvMapper(MANDATORY_ENV_KEYS)
 
     def start(self) -> None:
         path = self.env_mapper.get("DAEMON_WATCHER_PATH")
@@ -36,7 +39,8 @@ class FireflySyncDaemon():
         if not self.disable_cron_job:
             logging.info(f'Adding cronjob to the job list (expression: {self.env_mapper.get("DAEMON_CRON_EXPRESSION")})')
             scheduler = BackgroundScheduler()
-            scheduler.add_job(self.firefly_sync_cli.cron, 'cron',
+            scheduler.add_job(self.firefly_sync_cli.create_cron_job, 'cron',
+                              args=[self.env_mapper.get("DAEMON_CRON_CLI_TOKEN")],
                               **{part: value for part, value in zip(["minute", "hour", "day", "month", "day_of_week"],
                                                                     self.env_mapper.get("DAEMON_CRON_EXPRESSION").split())})
             scheduler.start()

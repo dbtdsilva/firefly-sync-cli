@@ -34,8 +34,9 @@ class FireflySyncCli:
         self.api = FireflyApi(env_values.get("FIREFLY_URL"), env_values.get("FIREFLY_TOKEN"))
         self.dry_run = dry_run
 
-    def cron(self):
-        pass
+    def create_cron_job(self, cli_token):
+        data = self.api.cron.create_cron_job(cli_token)
+        logging.info(f'Cron job run sucessfully: {data}')
 
     def import_file(self, file: str) -> bool:
         logging.info(f'Importing file "{file}"')

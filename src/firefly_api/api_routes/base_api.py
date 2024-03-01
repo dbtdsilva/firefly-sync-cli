@@ -36,6 +36,8 @@ class BaseApi(ABC):
             logging.error(f'Failed to GET {response.request.url}, received {response.status_code}: {response.json()}')
             response.raise_for_status()
         result = response.json()
+        if 'data' not in result:
+            return result
 
         data = result['data']
         while 'links' in result and 'next' in result['links']:
