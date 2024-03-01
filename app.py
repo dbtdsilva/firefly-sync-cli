@@ -27,7 +27,7 @@ if __name__ == "__main__":
                         action='store_false',
                         help="Execute import as dry-run (it will not persist anything)",
                         default=False)
-    parser.add_argument("--no-cron",
+    parser.add_argument("--no-cron-job",
                         action='store_true',
                         help="Prevents cron from being executed when using --daemon",
                         default=False)
@@ -35,7 +35,7 @@ if __name__ == "__main__":
 
     firefly_sync_cli = FireflySyncCli(myargs.dry_run)
     if myargs.daemon:
-        firefly_sync_daemon = FireflySyncDaemon(firefly_sync_cli, myargs.no_cron)
+        firefly_sync_daemon = FireflySyncDaemon(firefly_sync_cli, myargs.no_cron_job)
         firefly_sync_daemon.start()
     else:
         firefly_sync_cli.import_file(myargs.file)

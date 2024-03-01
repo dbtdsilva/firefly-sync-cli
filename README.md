@@ -8,22 +8,27 @@ This can be executed as a simple python script or be run as a container.
 
 ### Docker
 
-You can also setup a file watcher that checks for new file transactions that will be automatically parsed, imported and tagged in Firefly.
+You can also setup a daemon file watcher that checks for new file transactions that will be automatically parsed, imported and tagged in Firefly.
 
 ```yaml
 firefly-sync-cli:
     image: ghcr.io/dbtdsilva/firefly-sync-cli
     container_name: firefly-sync-cli
     environment:
-        - FILE_WATCHER_PATH=/app/uploads
         - FIREFLY_URL=<YOUR_FIREFLY_URL>
         - FIREFLY_TOKEN=<YOUR_TOKEN_HERE>
+        - DAEMON_WATCHER_PATH=/app/uploads
+        - DAEMON_CRON_ENABLED=true
+        - DAEMON_CRON_CLI_TOKEN=<YOUR_CLI_TOKEN>
+        - DAEMON_CRON_EXPRESSION=0 0 * * *
     volumes:
         - <YOUR_PATH_FOR_UPLOADS>:/app/uploads
     restart: always
 ```
 
-With this docker-compose, you will be able to upload your file to a directory of your preference.
+With this docker-compose, you will be able to upload your file to a directory of your preference. 
+
+An additional feature to it is that the required cronjob by firefly is also supported here, meaning that you don't need any external cron to deal with it. If you would like to disable the cron job, you can simply not set the variable and the other variables related to it are also not needed.
 
 The parsers are loaded dynamically (you can even provide your own, check 'Custom transactions' section), so you also need to indicate how to load them.
 
@@ -56,9 +61,12 @@ firefly-sync-cli:
     image: ghcr.io/dbtdsilva/firefly-sync-cli
     container_name: firefly-sync-cli
     environment:
-        - FILE_WATCHER_PATH=/app/uploads
         - FIREFLY_URL=<YOUR_FIREFLY_URL>
         - FIREFLY_TOKEN=<YOUR_TOKEN_HERE>
+        - DAEMON_WATCHER_PATH=/app/uploads
+        - DAEMON_CRON_ENABLED=true
+        - DAEMON_CRON_CLI_TOKEN=<YOUR_CLI_TOKEN>
+        - DAEMON_CRON_EXPRESSION=0 0 * * *
     volumes:
         - <YOUR_PATH_FOR_REPO>:/app
     restart: always
