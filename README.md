@@ -46,10 +46,21 @@ Meaning that it will be mapping files like 'montepio_20140505.csv' to the 'monte
 
 ```bash
 pip install -r requirements.txt
-python app.py [-h] (--file FILE | --file-watcher-path FILE_WATCHER_PATH) [--dry-run | --no-dry-run]
+python app.py [-h] (--file FILE | --daemon) [--dry-run] [--no-cron-job]
 ```
 
-You can either leave it as a file watcher (similar to the container) or choose to import a specific file. Feel free to test by using the --dry-run option.
+You can either leave it as a daemon (similar to the container) or choose to import a specific file. Feel free to test by using the --dry-run option.
+
+The daemon option will run against a specific path provided by the environment variables or .env and it will come automatically with a cron job that is required by Firefly III to have recurrent transactions, bill warnings, etc.
+
+### Environment variables
+
+- `FIREFLY_URL` This indicates the URL to your Firefly III instance;
+- `FIREFLY_TOKEN` Personal Access Token retrieved from 'Profile / OAuth / PAT' in your Firefly instance;
+- `DAEMON_WATCHER_PATH` Location where you want to import your bank transaction files;
+- `DAEMON_CRON_ENABLED` Enable or disable the cron job of Firefly;
+- `DAEMON_CRON_CLI_TOKEN` Command line token Token retrieved from 'Profile / Command line token' in your Firefly instance;
+- `DAEMON_CRON_EXPRESSION` Cron expression that will dictate how frequently the call to Firefly is made.
 
 ## Custom transactions
 
