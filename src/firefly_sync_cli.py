@@ -1,5 +1,6 @@
 import logging
 from typing import Any
+from datetime import datetime
 
 from .firefly_api.api import FireflyApi
 from .utils.env_mapper import EnvMapper
@@ -30,5 +31,7 @@ class FireflySyncCli:
     def import_file(self, file: str) -> bool:
         return TransactionImportService(self.api).import_file(file=file)
 
-    def link_identical_transactions(self) -> None:
-        TransactionLinkService(self.api).link_identical_transactions()
+    def link_identical_transactions(self, start_date: datetime = None, end_date: datetime = None,
+                                    amount_diff_percentage: float = 2.0, date_diff_days: int = 3) -> None:
+        TransactionLinkService(self.api).link_identical_transactions(
+            start_date, end_date, amount_diff_percentage, date_diff_days)

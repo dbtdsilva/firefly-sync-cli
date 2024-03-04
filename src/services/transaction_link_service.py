@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import timedelta, datetime
 import logging
 from typing import Dict, List, Tuple
 
@@ -15,8 +15,11 @@ class TransactionLinkService(BaseService):
     def __init__(self, api: FireflyApi) -> None:
         super().__init__(api)
 
-    def link_identical_transactions(self) -> None:
-        identical_transactions = self.__get_identical_transactions_by_source()
+    def link_identical_transactions(
+            self, start_date: datetime = None, end_date: datetime = None,
+            amount_diff_percentage: float = 2.0, date_diff_days: int = 3) -> None:
+        identical_transactions = self.__get_identical_transactions_by_source(
+            start_date, end_date, amount_diff_percentage, date_diff_days)
         linked_transactions = self.__select_identical_transactions(identical_transactions)
 
         if len(linked_transactions) == 0 or not TransactionLinkService.__get_yes_or_no_input():
@@ -56,10 +59,13 @@ class TransactionLinkService(BaseService):
 
         logging.info('Finished joining transactions')
 
-    def __get_identical_transactions_by_source(self) -> Dict[Transaction, List[Transaction]]:
-        transactions = self.api.transactions.get_transactions(transaction_type=TransactionType.ALL)
+    def __get_identical_transactions_by_source(
+            self, start_date: datetime = None, end_date: datetime = None,
+            amount_diff_percentage: float = 2.0, date_diff_days: int = 3) -> Dict[Transaction, List[Transaction]]:
+        transactions = self.api.transactions.get_transactions(transaction_type=TransactionType.ALL,
+                                                              start_date=start_date,
+                                                              end_date=end_date)
         identical_transactions = {}
-
         for src_tx in transactions:
             for dst_tx in transactions:
                 if src_tx.id == dst_tx.id or src_tx.source_id == dst_tx.destination_id:
@@ -68,8 +74,8 @@ class TransactionLinkService(BaseService):
                 if src_tx.type != TransactionType.WITHDRAWAL or dst_tx.type != TransactionType.DEPOSIT:
                     continue
 
-                if TransactionLinkService.__percentage_difference(src_tx.amount, dst_tx.amount) > 2 or \
-                   dst_tx.date < src_tx.date or abs(src_tx.date - dst_tx.date) > timedelta(days=3):
+                if TransactionLinkService.__percentage_difference(src_tx.amount, dst_tx.amount) > amount_diff_percentage or \
+                   dst_tx.date < src_tx.date or abs(src_tx.date - dst_tx.date) > timedelta(days=date_diff_days):
                     continue
 
                 if src_tx in identical_transactions:
