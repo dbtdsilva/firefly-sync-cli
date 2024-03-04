@@ -24,7 +24,7 @@ from ..parsers.parser import Parser
 class TransactionImportService:
 
     def __init__(self, api: FireflyApi) -> None:
-        self.api = api
+        super().__init__(api)
 
     def import_file(self, file: str) -> bool:
         logging.info(f'Importing file "{file}"')

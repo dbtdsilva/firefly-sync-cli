@@ -14,12 +14,12 @@ class TagsApi(BaseApi):
         if existing_tag is not None:
             return existing_tag
 
-        data = self.post('/', tag.model_dump(exclude_none=True, mode='json'))
+        data = self.__internal_post('/', tag.model_dump(exclude_none=True, mode='json'))
         return Tag(id=data['data']['id'], **data['data']['attributes'])
 
     def get_tag(self, tag: Tag) -> Tag:
         try:
-            data = self.get(f'{tag.tag}')
+            data = self.__internal_get(f'{tag.tag}')
             return Tag(id=data['id'], **data['attributes'])
         except HTTPError as error:
             if error.response.status_code == 404:

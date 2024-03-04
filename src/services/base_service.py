@@ -1,7 +1,12 @@
 from abc import ABC
 
+from ..firefly_api.api import FireflyApi
+
 
 class BaseService(ABC):
+
+    def __init__(self, api: FireflyApi) -> None:
+        self.api = api
 
     @staticmethod
     def __get_allowed_input(max_value) -> int | None:

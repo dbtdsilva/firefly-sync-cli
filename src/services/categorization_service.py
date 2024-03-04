@@ -7,8 +7,8 @@ from ..firefly_api.api import FireflyApi
 
 class CategorizationService(BaseService):
 
-    def __init__(self, firefly_api: FireflyApi) -> None:
-        self.api = firefly_api
+    def __init__(self, api: FireflyApi) -> None:
+        super().__init__(api)
 
     def interactive_categorize(self):
         transactions = self.api.transactions.get_transactions(transaction_type=TransactionType.ALL,

@@ -10,8 +10,8 @@ class AttachmentsApi(BaseApi):
         super().__init__(session, f'{base_url}/api/v1/attachments', token)
 
     def create_attachment(self, attachment: Attachment, file_path: str) -> Attachment:
-        data = self.post('/', attachment.model_dump(exclude_none=True, mode='json'))
+        data = self.__internal_post('/', attachment.model_dump(exclude_none=True, mode='json'))
         new_attachment = Attachment(id=data['data']['id'], **data['data']['attributes'])
-        self.post_with_files(f'{new_attachment.id}/upload', data=open(file_path, 'rb'))
+        self.__internal_post_with_files(f'{new_attachment.id}/upload', data=open(file_path, 'rb'))
 
         return new_attachment

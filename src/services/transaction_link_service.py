@@ -13,7 +13,7 @@ from ..firefly_api.api import FireflyApi
 class TransactionLinkService(BaseService):
 
     def __init__(self, api: FireflyApi) -> None:
-        self.api = api
+        super().__init__(api)
 
     def link_identical_transactions(self) -> None:
         identical_transactions = self.__get_identical_transactions_by_source()
