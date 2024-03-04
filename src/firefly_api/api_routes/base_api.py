@@ -72,4 +72,6 @@ class BaseApi(ABC):
 
     def delete(self, endpoint, params=None):
         response = self.session.delete(self._url(endpoint), params=params)
-        return response.json()
+        if response.status_code != 204:
+            logging.error(f'Failed to DELETE {response.request.url}, received {response.status_code}: {response.json()}')
+            response.raise_for_status()

@@ -49,3 +49,6 @@ class Transaction(BaseModel):
     due_date: Optional[datetime] = None
     payment_date: Optional[datetime] = None
     invoice_date: Optional[datetime] = None
+
+    def __hash__(self) -> int:
+        return self.id.__hash__()
