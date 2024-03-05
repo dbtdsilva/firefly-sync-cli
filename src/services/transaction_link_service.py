@@ -12,8 +12,8 @@ from ..firefly_api.api import FireflyApi
 
 class TransactionLinkService(BaseService):
 
-    def __init__(self, api: FireflyApi) -> None:
-        super().__init__(api)
+    def __init__(self, api: FireflyApi, dry_run: bool) -> None:
+        super().__init__(api, dry_run)
 
     def link_identical_transactions(
             self, start_date: datetime = None, end_date: datetime = None,
@@ -53,10 +53,10 @@ class TransactionLinkService(BaseService):
                 tags=tags)
 
             logging.info(f'Creating joined transaction at {joined_transaction.date}')
-            self.api.transactions.store_transaction(joined_transaction)
-            self.api.transactions.delete_transaction(src_tx)
-            self.api.transactions.delete_transaction(dst_tx)
-
+            if not self.dry_run:
+                self.api.transactions.store_transaction(joined_transaction)
+                self.api.transactions.delete_transaction(src_tx)
+                self.api.transactions.delete_transaction(dst_tx)
         logging.info('Finished joining transactions')
 
     def __get_identical_transactions_by_source(
@@ -104,7 +104,7 @@ class TransactionLinkService(BaseService):
                 logging.info(f'\t{i}: {dst_tx.date}, {dst_tx.destination_name}, '
                              f'{dst_tx.amount}, {dst_tx.description}, {dst_tx.id}')
 
-            read_value = BaseService.__get_allowed_input(len(dst_txs) - 1)
+            read_value = BaseService._get_allowed_input(len(dst_txs) - 1)
             if read_value is not None:
                 already_linked.add(src_tx.id)
                 already_linked.add(dst_txs[read_value].id)

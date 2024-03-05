@@ -14,11 +14,11 @@ class AccountApi(BaseApi):
         super().__init__(session, f'{base_url}/api/v1/accounts', token)
 
     def get_accounts(self, type: AccountType):
-        data = self.__internal_get('/', params={'type': type.value})
+        data = self._internal_get('/', params={'type': type.value})
         return [Account(id=item["id"], **item['attributes']) for item in data]
 
     def get_account_transactions(self, account_id: str, start_date: datetime, end_date: datetime) -> List[Transaction]:
-        data = self.__internal_get(
+        data = self._internal_get(
             f'{account_id}/transactions', params={'start': start_date.strftime(BaseApi.DATE_FORMAT),
                                                   'end': end_date.strftime(BaseApi.DATE_FORMAT)})
         return [Transaction(id=item['id'], **item['attributes']['transactions'][0])

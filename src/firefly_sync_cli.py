@@ -26,12 +26,12 @@ class FireflySyncCli:
         logging.info(f'Cron job run sucessfully: {data}')
 
     def categorize(self):
-        CategorizationService(self.api).interactive_categorize()
+        CategorizationService(self.api, self.dry_run).interactive_categorize()
 
     def import_file(self, file: str) -> bool:
-        return TransactionImportService(self.api).import_file(file=file)
+        return TransactionImportService(self.api, self.dry_run).import_file(file=file)
 
     def link_identical_transactions(self, start_date: datetime = None, end_date: datetime = None,
                                     amount_diff_percentage: float = 2.0, date_diff_days: int = 3) -> None:
-        TransactionLinkService(self.api).link_identical_transactions(
+        TransactionLinkService(self.api, self.dry_run).link_identical_transactions(
             start_date, end_date, amount_diff_percentage, date_diff_days)

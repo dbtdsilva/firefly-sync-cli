@@ -24,7 +24,7 @@ class TransactionApi(BaseApi):
         if transaction_type:
             params['type'] = transaction_type
         params['limit'] = 500
-        data = self.__internal_get('/', params=params)
+        data = self._internal_get('/', params=params)
         return [Transaction(id=item['id'], **item['attributes']['transactions'][0]) for item in data]
 
     def store_transactions(self, transactions: List[Transaction]) -> List[Transaction]:
@@ -37,7 +37,7 @@ class TransactionApi(BaseApi):
         return stored_transactions
 
     def store_transaction(self, transaction: Transaction) -> Transaction:
-        data = self.__internal_post('/', {
+        data = self._internal_post('/', {
             'error_if_duplicate_hash': False,
             'apply_rules': True,
             'fire_webhooks': True,
@@ -47,4 +47,4 @@ class TransactionApi(BaseApi):
         return Transaction(id=data['data']['id'], **data['data']['attributes']['transactions'][0])
 
     def delete_transaction(self, transaction: Transaction) -> None:
-        self.__internal_delete(f'{transaction.id}')
+        self._internal_delete(f'{transaction.id}')

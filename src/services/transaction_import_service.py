@@ -19,12 +19,13 @@ from ..firefly_api.api import FireflyApi
 from ..firefly_api.models.account_type import AccountType
 from ..firefly_api.models.account import Account
 from ..parsers.parser import Parser
+from .base_service import BaseService
 
 
-class TransactionImportService:
+class TransactionImportService(BaseService):
 
-    def __init__(self, api: FireflyApi) -> None:
-        super().__init__(api)
+    def __init__(self, api: FireflyApi, dry_run: bool) -> None:
+        super().__init__(api, dry_run)
 
     def import_file(self, file: str) -> bool:
         logging.info(f'Importing file "{file}"')

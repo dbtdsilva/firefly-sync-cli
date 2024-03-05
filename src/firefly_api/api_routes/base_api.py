@@ -27,7 +27,7 @@ class BaseApi(ABC):
             return self.base_url
         return f'{self.base_url}/{endpoint}'
 
-    def __internal_get(self, endpoint, params=None):
+    def _internal_get(self, endpoint, params=None):
         response = self.session.get(self.__url(endpoint), params=params)
         return self.__get_all_pages(response)
 
@@ -50,14 +50,14 @@ class BaseApi(ABC):
             data.extend(result['data'])
         return data
 
-    def __internal_post(self, endpoint, json_value=None):
+    def _internal_post(self, endpoint, json_value=None):
         response = self.session.post(self.__url(endpoint), json=json_value)
         if response.status_code != 200 and response.status_code != 204:
             logging.error(f'Failed to POST {endpoint}, received {response.status_code}: {response.json()}')
             response.raise_for_status()
         return response.json()
 
-    def __internal_post_with_files(self, endpoint, data):
+    def _internal_post_with_files(self, endpoint, data):
         response = self.session.post(self.__url(endpoint), data=data, headers={
             'Content-Type': 'application/octet-stream',
             'Authorization': f'Bearer {self.token}'
@@ -66,7 +66,7 @@ class BaseApi(ABC):
             logging.error(f'Failed to POST {endpoint}, received {response.status_code}: {response.json()}')
             response.raise_for_status()
 
-    def __internal_delete(self, endpoint, params=None):
+    def _internal_delete(self, endpoint, params=None):
         response = self.session.delete(self.__url(endpoint), params=params)
         if response.status_code != 204:
             logging.error(f'Failed to DELETE {response.request.url}, received {response.status_code}: {response.json()}')

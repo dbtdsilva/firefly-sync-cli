@@ -10,5 +10,5 @@ class CategoriesApi(BaseApi):
         super().__init__(session, f'{base_url}/api/v1/categories', token)
 
     def get_categories(self):
-        data = self.__internal_get('/')
+        data = self._internal_get('/')
         return [Category(id=item['id'], **item['attributes']) for item in data]

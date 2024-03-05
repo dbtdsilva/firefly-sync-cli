@@ -7,8 +7,8 @@ from ..firefly_api.api import FireflyApi
 
 class CategorizationService(BaseService):
 
-    def __init__(self, api: FireflyApi) -> None:
-        super().__init__(api)
+    def __init__(self, api: FireflyApi, dry_run: bool) -> None:
+        super().__init__(api, dry_run)
 
     def interactive_categorize(self):
         transactions = self.api.transactions.get_transactions(transaction_type=TransactionType.ALL,
@@ -21,6 +21,6 @@ class CategorizationService(BaseService):
             print(f"Transaction: {transaction.description} | {transaction.amount} {transaction.currency_code} "
                   f"| {transaction.type} | {transaction.date}")
 
-            selected_category_index = BaseService.__get_allowed_input(len(categories) - 1)
+            selected_category_index = BaseService._get_allowed_input(len(categories) - 1)
             selected_category = categories[selected_category_index]
             print(selected_category)

@@ -9,5 +9,5 @@ class CronApi(BaseApi):
         super().__init__(session, f'{base_url}/api/v1/cron', token)
 
     def create_cron_job(self, cli_token):
-        data = self.__internal_get(f'{cli_token}')
+        data = self._internal_get(f'{cli_token}')
         return data

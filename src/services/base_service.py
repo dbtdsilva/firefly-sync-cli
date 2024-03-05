@@ -5,11 +5,12 @@ from ..firefly_api.api import FireflyApi
 
 class BaseService(ABC):
 
-    def __init__(self, api: FireflyApi) -> None:
+    def __init__(self, api: FireflyApi, dry_run: bool) -> None:
         self.api = api
+        self.dry_run = dry_run
 
     @staticmethod
-    def __get_allowed_input(max_value) -> int | None:
+    def _get_allowed_input(max_value):
         user_input = None
         while True:
             user_input = input("Please select one of the options (or 's' to skip): ").strip().lower()
