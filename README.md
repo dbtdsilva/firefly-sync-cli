@@ -46,12 +46,14 @@ Meaning that it will be mapping files like 'montepio_20140505.csv' to the 'monte
 
 ```bash
 pip install -r requirements.txt
-python app.py [-h] (--file FILE | --daemon) [--dry-run] [--no-cron-job]
+python app.py [-h] [--dry-run] {daemon,tx-import,tx-link,tx-category}
 ```
 
-You can either leave it as a daemon (similar to the container) or choose to import a specific file. Feel free to test by using the --dry-run option.
-
-The daemon option will run against a specific path provided by the environment variables or .env and it will come automatically with a cron job that is required by Firefly III to have recurrent transactions, bill warnings, etc.
+The script currently supports 4 operations:
+- daemon, which will run against a specific path provided by the environment variables or .env and it will come automatically with a cron job that is required by Firefly III to have recurrent transactions, bill warnings, etc;
+- tx-import, it imports a file from a bank transaction;
+- tx-link, it links transfer operation between existing accounts that were previously flagged as expense / deposit. The process is interactive;
+- tx-category, it allows to categorize existing transactions in interactive way.
 
 ### Environment variables
 
