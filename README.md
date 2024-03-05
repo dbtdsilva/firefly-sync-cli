@@ -50,10 +50,10 @@ python app.py [-h] [--dry-run] {daemon,tx-import,tx-link,tx-category}
 ```
 
 The script currently supports 4 operations:
-- daemon, which will run against a specific path provided by the environment variables or .env and it will come automatically with a cron job that is required by Firefly III to have recurrent transactions, bill warnings, etc;
-- tx-import, it imports a file from a bank transaction;
-- tx-link, it links transfer operation between existing accounts that were previously flagged as expense / deposit. The process is interactive;
-- tx-category, it allows to categorize existing transactions in interactive way.
+- `daemon`, which will run against a specific path provided by the environment variables or .env and it will come automatically with a cron job that is required by Firefly III to have recurrent transactions, bill warnings, etc;
+- `tx-import`, it imports a file from a bank transaction;
+- `tx-link`, it links transfer operation between existing accounts that were previously flagged as expense / deposit. The process is interactive;
+- `tx-category`, it allows to categorize existing transactions in interactive way.
 
 ### Environment variables
 
