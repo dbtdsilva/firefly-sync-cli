@@ -16,8 +16,8 @@ class TransactionLinkService(BaseService):
         super().__init__(api, dry_run)
 
     def link_identical_transactions(
-            self, start_date: datetime = None, end_date: datetime = None,
-            amount_diff_percentage: float = 2.0, date_diff_days: int = 3) -> None:
+            self, start_date: datetime, end_date: datetime,
+            amount_diff_percentage: float, date_diff_days: int) -> None:
         identical_transactions = self.__get_identical_transactions_by_source(
             start_date, end_date, amount_diff_percentage, date_diff_days)
         linked_transactions = self.__select_identical_transactions(identical_transactions)

@@ -31,7 +31,7 @@ class FireflySyncCli:
     def import_file(self, file: str) -> bool:
         return TransactionImportService(self.api, self.dry_run).import_file(file=file)
 
-    def link_identical_transactions(self, start_date: datetime = None, end_date: datetime = None,
-                                    amount_diff_percentage: float = 2.0, date_diff_days: int = 3) -> None:
+    def link_identical_transactions(self, start_date: datetime, end_date: datetime,
+                                    amount_diff_percentage: float, date_diff_days: int) -> None:
         TransactionLinkService(self.api, self.dry_run).link_identical_transactions(
             start_date, end_date, amount_diff_percentage, date_diff_days)
