@@ -9,4 +9,4 @@ COPY src /app/src
 
 RUN pip install -r requirements.txt
 
-CMD ["sh", "-c", "if [ \"$DAEMON_CRON_ENABLED\" = true ] || [ \"$DAEMON_CRON_ENABLED\" = 1]; then python app.py --daemon; else python app.py --daemon --no-cron-job; fi"]
+CMD ["sh", "-c", "if [ \"$DAEMON_CRON_ENABLED\" = true ] || [ \"$DAEMON_CRON_ENABLED\" = 1]; then python app.py daemon; else python app.py daemon --no-cron-job; fi"]
