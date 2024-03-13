@@ -85,7 +85,7 @@ class TransactionImportService(BaseService):
 
             match_filename = sync_note.group(1).strip()
             match_parser_module = sync_note.group(2).strip()
-            if file_basename.startswith(match_filename) and (match is None or len(match[0]) < match_filename):
+            if file_basename.startswith(match_filename) and (match is None or len(match[0]) < len(match_filename)):
                 match = (match_filename, account, match_parser_module)
         return (match[1], self.__retrieve_module(match[2])) if match is not None else (None, None)
 
