@@ -90,13 +90,16 @@ class TransactionImportService(BaseService):
         return (match[1], self.__retrieve_module(match[2])) if match is not None else (None, None)
 
     def __retrieve_module(self, module) -> Parser:
+        logging.info(f'Loading module with the name: {module}')
         try:
-            loaded_module = importlib.import_module(f'.parsers.{module}', __package__)
+            loaded_module = importlib.import_module(f'.parsers.{module}', 'src')
             for _, obj in vars(loaded_module).items():
                 if isinstance(obj, type) and issubclass(obj, Parser) and obj != Parser:
                     return obj
+            logging.info(f'Module ({module}) was not found with class Parser: {vars(loaded_module).items()}')
             return None
-        except ModuleNotFoundError:
+        except ModuleNotFoundError as e:
+            logging.info(f'Module ({module}) was not found: {e}')
             return None
 
     def __map_transaction_to_firefly(self, parsed_transaction: ParsedTransaction, account: Account, tag: Tag) -> Transaction:
