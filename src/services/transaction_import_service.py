@@ -47,8 +47,11 @@ class TransactionImportService(BaseService):
         stored_transactions = self.api.accounts.get_account_transactions(
             account_id=account.id, start_date=start_date, end_date=end_date)
 
-        stored_transactions_by_reference = {t.internal_reference: t for t in stored_transactions
-                                            if t.internal_reference is not None}
+        stored_transactions_by_reference = {
+            hash_part.strip(): t
+            for t in stored_transactions
+            for hash_part in (t.internal_reference.split(',') if t.internal_reference is not None else [])
+            if hash_part}
 
         tag = self.__create_tag_for_import(file, account, start_date, end_date) if not self.dry_run else None
 

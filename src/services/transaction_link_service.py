@@ -10,6 +10,10 @@ from ..firefly_api.models.transaction_type import TransactionType
 from ..firefly_api.api import FireflyApi
 
 
+DEFAULT_AMOUNT_DIFF_PERCENTAGE = 2.0
+DEFAULT_DATE_DIFF_DAYS = 3
+
+
 class TransactionLinkService(BaseService):
 
     def __init__(self, api: FireflyApi, dry_run: bool) -> None:
@@ -61,7 +65,10 @@ class TransactionLinkService(BaseService):
 
     def __get_identical_transactions_by_source(
             self, start_date: datetime = None, end_date: datetime = None,
-            amount_diff_percentage: float = 2.0, date_diff_days: int = 3) -> Dict[Transaction, List[Transaction]]:
+            amount_diff_percentage: float = DEFAULT_AMOUNT_DIFF_PERCENTAGE,
+            date_diff_days: int = DEFAULT_DATE_DIFF_DAYS) -> Dict[Transaction, List[Transaction]]:
+        amount_diff_percentage = DEFAULT_AMOUNT_DIFF_PERCENTAGE if amount_diff_percentage is None else amount_diff_percentage
+        date_diff_days = DEFAULT_DATE_DIFF_DAYS if date_diff_days is None else date_diff_days
         transactions = self.api.transactions.get_transactions(transaction_type=TransactionType.ALL,
                                                               start_date=start_date,
                                                               end_date=end_date)

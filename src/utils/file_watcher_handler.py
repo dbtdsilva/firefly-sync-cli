@@ -1,7 +1,6 @@
 import logging
 import os
 import shutil
-import traceback
 from watchdog.events import FileSystemEventHandler
 
 from ..firefly_sync_cli import FireflySyncCli
@@ -23,7 +22,7 @@ class FileWatcherHandler(FileSystemEventHandler):
         try:
             self.import_and_move_file(file_path=file_path)
         except Exception as e:  # noqa: F841
-            logging.error(traceback.format_exc())
+            logging.error(e)
 
     def import_and_move_file(self, file_path):
         if not os.path.exists(file_path):
