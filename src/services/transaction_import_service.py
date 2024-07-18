@@ -44,8 +44,7 @@ class TransactionImportService(BaseService):
 
         start_date = min(t.date for t in parsed_transactions)
         end_date = max(t.date for t in parsed_transactions)
-        stored_transactions = self.api.accounts.get_account_transactions(
-            account_id=account.id, start_date=start_date, end_date=end_date)
+        stored_transactions = self.api.transactions.get_transactions(start_date=start_date, end_date=end_date)
 
         stored_transactions_by_reference = {
             hash_part.strip(): t

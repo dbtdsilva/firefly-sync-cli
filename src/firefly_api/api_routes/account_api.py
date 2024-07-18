@@ -17,9 +17,14 @@ class AccountApi(BaseApi):
         data = self._internal_get('/', params={'type': type.value})
         return [Account(id=item["id"], **item['attributes']) for item in data]
 
-    def get_account_transactions(self, account_id: str, start_date: datetime, end_date: datetime) -> List[Transaction]:
-        data = self._internal_get(
-            f'{account_id}/transactions', params={'start': start_date.strftime(BaseApi.DATE_FORMAT),
-                                                  'end': end_date.strftime(BaseApi.DATE_FORMAT)})
+    def get_account_transactions(self, account_id: str, start_date: datetime = None,
+                                 end_date: datetime = None) -> List[Transaction]:
+        params = {}
+        if start_date is not None:
+            params['start'] = start_date.strftime(BaseApi.DATE_FORMAT)
+        if end_date is not None:
+            params['end'] = end_date.strftime(BaseApi.DATE_FORMAT)
+
+        data = self._internal_get(f'{account_id}/transactions', params=params)
         return [Transaction(id=item['id'], **item['attributes']['transactions'][0])
                 for item in data]

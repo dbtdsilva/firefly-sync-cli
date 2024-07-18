@@ -1,5 +1,5 @@
 import logging
-from typing import Any
+from typing import Any, List
 from datetime import datetime
 
 from .firefly_api.api import FireflyApi
@@ -25,8 +25,9 @@ class FireflySyncCli:
         data = self.api.cron.create_cron_job(cli_token)
         logging.info(f'Cron job run sucessfully: {data}')
 
-    def categorize(self):
-        CategorizationService(self.api, self.dry_run).interactive_categorize()
+    def categorize(self, start_date: datetime = None, end_date: datetime = None, account_ids: List[str] = None):
+        CategorizationService(self.api, self.dry_run).interactive_categorize(
+            start_date=start_date, end_date=end_date, account_ids=account_ids)
 
     def import_file(self, file: str) -> bool:
         return TransactionImportService(self.api, self.dry_run).import_file(file=file)

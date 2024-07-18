@@ -74,7 +74,7 @@ if __name__ == "__main__":
                                 help="Specific the start-date to link accounts (format: YYYY-MM-DD)",
                                 type=lambda s: datetime.strptime(s, '%Y-%m-%d'))
     parser_tx_link.add_argument('--end-date',
-                                help="Specific the start-date to link accounts (format: YYYY-MM-DD)",
+                                help="Specific the end-date to link accounts (format: YYYY-MM-DD)",
                                 type=lambda s: datetime.strptime(s, '%Y-%m-%d'))
     parser_tx_link.add_argument('--amount-diff',
                                 type=float,
@@ -85,6 +85,16 @@ if __name__ == "__main__":
 
     # Categorize transactions
     parser_tx_category = jobs.add_parser('tx-category', help="Categorize existing transactions (interactive)")
+    parser_tx_category.add_argument('--start-date',
+                                    help="Specific the start-date to categorize accounts (format: YYYY-MM-DD)",
+                                    type=lambda s: datetime.strptime(s, '%Y-%m-%d'))
+    parser_tx_category.add_argument('--end-date',
+                                    help="Specific the end-date to categorize accounts (format: YYYY-MM-DD)",
+                                    type=lambda s: datetime.strptime(s, '%Y-%m-%d'))
+    parser_tx_category.add_argument('--account-ids',
+                                    type=str,
+                                    help="Account IDs separated by comma (e.g: 3,4,7)",
+                                    default="")
 
     args = parser.parse_args()
 
@@ -99,4 +109,9 @@ if __name__ == "__main__":
                                                      amount_diff_percentage=args.amount_diff,
                                                      date_diff_days=args.date_diff)
     elif args.job == 'tx-category':
-        firefly_sync_cli.categorize()
+        firefly_sync_cli.categorize(
+            start_date=args.start_date, end_date=args.end_date,
+            account_ids=[account_id
+                         for account_ids in args.account_ids
+                         for account_id in account_ids.split(',')
+                         if account_id])
