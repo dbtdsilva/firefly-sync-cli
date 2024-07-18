@@ -26,10 +26,10 @@ class RevolutParser(Parser):
 
             if amount <= 0:
                 transaction_type = ParsedTransactionType.DEBIT
-                amount = abs(amount)
+                amount = abs(amount) + fee
             else:
                 transaction_type = ParsedTransactionType.CREDIT
-            amount += fee
+                amount = amount - fee
 
             transactions.append(ParsedTransaction(
                 type=transaction_type, date=transaction_date, amount=amount,
