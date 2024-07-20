@@ -1,20 +1,12 @@
 # CHANGELOG
 
-## v0.0.1 (2024-07-20)
-
-### Ci
-
-* ci: semantic-release only after build, test and codeql ([`44f22e5`](https://github.com/dbtdsilva/firefly-sync-cli/commit/44f22e50d8b68d758991de0dd57cc328c903eb10))
-
-* ci: changed branch from master to main ([`4aa2e47`](https://github.com/dbtdsilva/firefly-sync-cli/commit/4aa2e47109dd821414feaf9ccc0fbbaa455235e9))
-
-* ci: added semantic release and renamed workflows ([`0bb0b13`](https://github.com/dbtdsilva/firefly-sync-cli/commit/0bb0b1386e42adf9a9d6af0c2b5aaa186789c4df))
+## v1.2.3 (2024-07-19)
 
 ### Fix
 
-* fix: changing encoding type to prevent conflicts ([`d9128c9`](https://github.com/dbtdsilva/firefly-sync-cli/commit/d9128c97528d8ef08a0a2e207b1d2440accb89b8))
-
 * fix: revolut parser not processing fees properly ([`c6ddb06`](https://github.com/dbtdsilva/firefly-sync-cli/commit/c6ddb06d53c9bef4006e52b1e0779d2eea7eb2a8))
+
+## v1.2.2 (2024-07-18)
 
 ### Unknown
 
@@ -22,7 +14,15 @@
 
 * Split internal reference when there are multiple ([`2ea9580`](https://github.com/dbtdsilva/firefly-sync-cli/commit/2ea9580498cc50c4c2f0fb907b34cd22cb32d8c7))
 
+## v1.2.1 (2024-03-13)
+
+### Unknown
+
 * Hotfix module loading ([`671bd63`](https://github.com/dbtdsilva/firefly-sync-cli/commit/671bd632bf9ea8e2423e8494b64e9e583580b26d))
+
+## v1.2.0 (2024-03-13)
+
+### Unknown
 
 * Small fixup with the filename length matching ([`21deadd`](https://github.com/dbtdsilva/firefly-sync-cli/commit/21deaddab006c2f8cdaa64c1034b813bc03a9c12))
 
@@ -44,6 +44,10 @@
 
 * Improved README.md with cron information and environment variables ([`7d9c0f9`](https://github.com/dbtdsilva/firefly-sync-cli/commit/7d9c0f9d781bb1b5c82170b159220b9023271383))
 
+## v1.1.0 (2024-03-01)
+
+### Unknown
+
 * Supported cron job ([`a3a19ee`](https://github.com/dbtdsilva/firefly-sync-cli/commit/a3a19ee495df43650b9c01a9ba21fd6bf4a84e76))
 
 * Updated Dockerfile with --daemon option ([`b4ea560`](https://github.com/dbtdsilva/firefly-sync-cli/commit/b4ea5603b7f7f879b029c7f2169ce8d2192bb153))
@@ -56,9 +60,21 @@
 
 * Updated workflow versions ([`b8a050c`](https://github.com/dbtdsilva/firefly-sync-cli/commit/b8a050ceac6580f15648997e02014d4639b9174a))
 
+## v1.0.2 (2024-03-01)
+
+### Unknown
+
 * Skip file with no transactions and amount of 0 ([`114cef9`](https://github.com/dbtdsilva/firefly-sync-cli/commit/114cef9c4daf7320d440375b00a86e68cebb1b17))
 
+## v1.0.1 (2024-02-29)
+
+### Unknown
+
 * Improved logging and CPU usage ([`4f672c3`](https://github.com/dbtdsilva/firefly-sync-cli/commit/4f672c3b2b7200879a0279f2398f8ba49ef61066))
+
+## v1.0.0 (2024-02-29)
+
+### Unknown
 
 * Create tag if the error is while retrieving 404 ([`8a8e4ac`](https://github.com/dbtdsilva/firefly-sync-cli/commit/8a8e4ac991908081841ed360aa8f21d9cecf18eb))
 

@@ -24,3 +24,5 @@ jobs:
       uses: python-semantic-release/python-semantic-release@master
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
+        git_committer_name: ${{ github.actor }}
+        git_committer_email: ${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com
