@@ -10,7 +10,7 @@ class RevolutParserTest(unittest.TestCase):
     def test_sample(self):
         transactions = RevolutParser.parse('tests/examples/revolut_example.csv')
         self.assertIsNotNone(transactions)
-        self.assertEqual(9, len(transactions))
+        self.assertEqual(10, len(transactions))
 
 
 if __name__ == '__main__':

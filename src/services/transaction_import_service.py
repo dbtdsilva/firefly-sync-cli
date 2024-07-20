@@ -5,7 +5,7 @@ import re
 import os
 import logging
 import importlib
-import hashlib
+import base64
 
 from ..firefly_api.models.attachment import Attachment
 from ..firefly_api.models.attachable_type import AttachableType
@@ -133,8 +133,7 @@ class TransactionImportService(BaseService):
     def __generate_hash_for_transaction(self, parsed_transaction: ParsedTransaction) -> str:
         data = (f"{parsed_transaction.type},{parsed_transaction.date},{parsed_transaction.amount},"
                 f"{parsed_transaction.description},{parsed_transaction.currency_code}")
-        hash_object = hashlib.sha256(data.encode())
-        return hash_object.hexdigest()
+        return base64.urlsafe_b64encode(data.encode()).decode()
 
     def __create_tag_for_import(self, file: str, account: Account, start_date: datetime, end_date: datetime) -> Tag:
         tag = self.api.tags.create_tag(Tag(
