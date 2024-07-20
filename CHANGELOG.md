@@ -1,5 +1,25 @@
 # CHANGELOG
 
+## v1.2.4 (2024-07-20)
+
+### Ci
+
+* ci: added pyproject.toml ([`86e608f`](https://github.com/dbtdsilva/firefly-sync-cli/commit/86e608f2f5271db7624ba64dc894c6d328ee8919))
+
+* ci: updated workflow, config and changelog ([`a87f4bd`](https://github.com/dbtdsilva/firefly-sync-cli/commit/a87f4bdb9f44b0b8fac72a64bb4c7493568bf148))
+
+* ci: fixed workflow not waiting for build and test ([`eb6c146`](https://github.com/dbtdsilva/firefly-sync-cli/commit/eb6c1467a9c2f1c2034759de94bc83c311f977ab))
+
+* ci: semantic-release only after build, test and codeql ([`44f22e5`](https://github.com/dbtdsilva/firefly-sync-cli/commit/44f22e50d8b68d758991de0dd57cc328c903eb10))
+
+* ci: changed branch from master to main ([`4aa2e47`](https://github.com/dbtdsilva/firefly-sync-cli/commit/4aa2e47109dd821414feaf9ccc0fbbaa455235e9))
+
+* ci: added semantic release and renamed workflows ([`0bb0b13`](https://github.com/dbtdsilva/firefly-sync-cli/commit/0bb0b1386e42adf9a9d6af0c2b5aaa186789c4df))
+
+### Fix
+
+* fix: changing encoding type to prevent conflicts ([`d9128c9`](https://github.com/dbtdsilva/firefly-sync-cli/commit/d9128c97528d8ef08a0a2e207b1d2440accb89b8))
+
 ## v1.2.3 (2024-07-19)
 
 ### Fix
