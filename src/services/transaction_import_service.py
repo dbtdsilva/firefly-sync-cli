@@ -143,5 +143,5 @@ class TransactionImportService(BaseService):
 
         self.api.attachments.create_attachment(
             attachment=Attachment(filename=os.path.basename(file), attachable_type=AttachableType.TAG, attachable_id=tag.id),
-            file_path=file)
+            data=open(file, 'rb').read())
         return tag
