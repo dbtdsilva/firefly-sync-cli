@@ -6,7 +6,6 @@ from requests import Session
 from .base_api import BaseApi
 from ..models.transaction import Transaction
 from ..models.transaction_type import TransactionType
-import logging
 
 
 class TransactionApi(BaseApi):
@@ -26,15 +25,6 @@ class TransactionApi(BaseApi):
         params['limit'] = 500
         data = self._internal_get('/', params=params)
         return [Transaction(id=item['id'], **item['attributes']['transactions'][0]) for item in data]
-
-    def store_transactions(self, transactions: List[Transaction]) -> List[Transaction]:
-        stored_transactions = []
-        for index, transaction in enumerate(transactions):
-            logging.info(f'Importing "{transaction.description}" from {transaction.date} '
-                         f'({index+1} out of {len(transactions)})')
-            stored_transaction = self.store_transaction(transaction)
-            stored_transactions.append(stored_transaction)
-        return stored_transactions
 
     def store_transaction(self, transaction: Transaction) -> Transaction:
         data = self._internal_post('/', {

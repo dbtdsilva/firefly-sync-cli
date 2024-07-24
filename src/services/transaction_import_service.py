@@ -1,11 +1,13 @@
 from types import ModuleType
-from typing import Tuple
+from typing import List, Tuple
 from datetime import datetime, date as dt
 import re
 import os
 import logging
 import importlib
 import base64
+
+from requests import HTTPError
 
 from ..firefly_api.models.attachment import Attachment
 from ..firefly_api.models.attachable_type import AttachableType
@@ -54,7 +56,7 @@ class TransactionImportService(BaseService):
 
         tag = self.__create_tag_for_import(file, account, start_date, end_date) if not self.dry_run else None
 
-        imported_transactions = []
+        to_be_imported_txs = []
         for parsed_transaction in parsed_transactions:
             if parsed_transaction.amount == 0:
                 logging.warning(f'Parsed transaction had an amount of 0. Parsed: {parsed_transaction}')
@@ -65,13 +67,29 @@ class TransactionImportService(BaseService):
                 logging.warning(f'Parsed transaction was already stored with id {found_transaction.id} '
                                 f'(reference: {found_transaction.internal_reference}). Parsed: {parsed_transaction}')
                 continue
-            imported_transactions.append(transaction)
+            to_be_imported_txs.append(transaction)
 
         if not self.dry_run:
-            self.api.transactions.store_transactions(imported_transactions)
-        logging.info(f'Finished importing file "{file}" with {len(imported_transactions)} transactions '
-                     f'(parsed {len(parsed_transactions)} transactions)')
+            (success_txs, failed_txs) = self.__store_transactions(to_be_imported_txs)
+            logging.info(f'Finished importing file "{file}" with {len(to_be_imported_txs)} transactions '
+                         f'(parsed {len(parsed_transactions)} transactions: {len(to_be_imported_txs)} valid, '
+                         f'{len(success_txs)} inserted, {len(failed_txs)} failed)')
         return True
+
+    def __store_transactions(self, transactions: List[Transaction]) -> Tuple[List[Transaction], List[Transaction]]:
+        stored_transactions = []
+        failed_transactions = []
+        for index, transaction in enumerate(transactions):
+            try:
+                logging.debug(f'Importing "{transaction.description}" from {transaction.date} '
+                              f'({index+1} out of {len(transactions)})')
+                stored_transaction = self.api.transactions.store_transaction(transaction)
+                stored_transactions.append(stored_transaction)
+            except HTTPError as http_error:
+                logging.error(f'Skipping transaction after failing to insert '
+                              f'(transaction: {transaction}, error: {http_error})')
+                failed_transactions.append(transaction)
+        return (stored_transactions, failed_transactions)
 
     def __find_account_matching_file(self, file: str) -> Tuple[Account, ModuleType]:
         file_basename = os.path.basename(file)
