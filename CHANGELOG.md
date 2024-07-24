@@ -1,4 +1,7 @@
 # CHANGELOG
+## v1.2.7 (2024-07-24)
+### Fix
+* fix: keep trying insert transactions even if one of them fails ([`109c424`](https://github.com/dbtdsilva/firefly-sync-cli/commit/109c4249575caa07ab2c737cb8fb6f4bcede8b8a))
 ## v1.2.6 (2024-07-22)
 ### Fix
 * fix: deploy was not happening properly ([`413d3aa`](https://github.com/dbtdsilva/firefly-sync-cli/commit/413d3aa39a985b2d9dfbb316391c1beb0ca39c85))
