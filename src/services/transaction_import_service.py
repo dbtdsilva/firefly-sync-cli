@@ -77,19 +77,33 @@ class TransactionImportService(BaseService):
         return True
 
     def __store_transactions(self, transactions: List[Transaction]) -> Tuple[List[Transaction], List[Transaction]]:
-        stored_transactions = []
-        failed_transactions = []
-        for index, transaction in enumerate(transactions):
+        stored_txs = []
+        failed_txs = []
+
+        # Insert transactions to be imported
+        for index, tx in enumerate(transactions):
             try:
-                logging.debug(f'Importing "{transaction.description}" from {transaction.date} '
+                logging.debug(f'Importing "{tx.description}" from {tx.date} '
                               f'({index+1} out of {len(transactions)})')
-                stored_transaction = self.api.transactions.store_transaction(transaction)
-                stored_transactions.append(stored_transaction)
+                stored_transaction = self.api.transactions.store_transaction(tx)
+                stored_txs.append(stored_transaction)
             except HTTPError as http_error:
-                logging.error(f'Skipping transaction after failing to insert '
-                              f'(transaction: {transaction}, error: {http_error})')
-                failed_transactions.append(transaction)
-        return (stored_transactions, failed_transactions)
+                logging.error(f'Failed to insert transaction: {tx}, error: {http_error}')
+                failed_txs.append(tx)
+
+        # Retry failed transactions
+        failed_after_retry_txs = []
+        for tx in enumerate(failed_txs):
+            try:
+                logging.debug(f'Re-trying importing "{tx.description}" from {tx.date} '
+                              f'({index+1} out of {len(failed_txs)})')
+                stored_transaction = self.api.transactions.store_transaction(tx)
+                stored_txs.append(stored_transaction)
+            except HTTPError as http_error:
+                logging.error(f'Skipping insertion of retried transaction (transaction: {tx}, error: {http_error})')
+                failed_after_retry_txs.append(tx)
+
+        return (stored_txs, failed_after_retry_txs)
 
     def __find_account_matching_file(self, file: str) -> Tuple[Account, ModuleType]:
         file_basename = os.path.basename(file)
