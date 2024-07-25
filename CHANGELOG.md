@@ -1,4 +1,12 @@
 # CHANGELOG
+## v1.4.0 (2024-07-25)
+### Feature
+* feat: allow setting specific log level from environment variables ([`fe5e34d`](https://github.com/dbtdsilva/firefly-sync-cli/commit/fe5e34d6b99233f51af49e82fabeffd8889aaa20))
+### Fix
+* fix: loggers will now show the class invoking that logger ([`2ce637b`](https://github.com/dbtdsilva/firefly-sync-cli/commit/2ce637ba95c2bd9e7a0749b5ee28259077f9bbd4))
+* fix: enumerate was not correct in failed_txs ([`2b76037`](https://github.com/dbtdsilva/firefly-sync-cli/commit/2b7603799bdef4d24ab1ded8352895780491e2ec))
+### Style
+* style: small fixup ([`feeec32`](https://github.com/dbtdsilva/firefly-sync-cli/commit/feeec327ca56d96955cf8a1027f355ed5b0d2f4d))
 ## v1.3.0 (2024-07-25)
 ### Feature
 * feat: Failed transactions will be retried once ([`5fc1f54`](https://github.com/dbtdsilva/firefly-sync-cli/commit/5fc1f548f46ce1e8b530a51f50250d349350e190))
