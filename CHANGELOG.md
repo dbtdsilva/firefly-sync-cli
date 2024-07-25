@@ -1,4 +1,7 @@
 # CHANGELOG
+## v1.3.0 (2024-07-25)
+### Feature
+* feat: Failed transactions will be retried once ([`5fc1f54`](https://github.com/dbtdsilva/firefly-sync-cli/commit/5fc1f548f46ce1e8b530a51f50250d349350e190))
 ## v1.2.7 (2024-07-24)
 ### Fix
 * fix: keep trying insert transactions even if one of them fails ([`109c424`](https://github.com/dbtdsilva/firefly-sync-cli/commit/109c4249575caa07ab2c737cb8fb6f4bcede8b8a))
