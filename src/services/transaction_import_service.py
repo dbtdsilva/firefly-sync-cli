@@ -93,9 +93,9 @@ class TransactionImportService(BaseService):
 
         # Retry failed transactions
         failed_after_retry_txs = []
-        for tx in enumerate(failed_txs):
+        for index, tx in enumerate(failed_txs):
             try:
-                logging.debug(f'Re-trying importing "{tx.description}" from {tx.date} '
+                logging.info(f'Re-trying importing "{tx.description}" from {tx.date} '
                               f'({index+1} out of {len(failed_txs)})')
                 stored_transaction = self.api.transactions.store_transaction(tx)
                 stored_txs.append(stored_transaction)
