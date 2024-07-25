@@ -2,6 +2,7 @@ import argparse
 import logging
 from datetime import datetime
 
+from src.utils.env_mapper import EnvMapper
 from src.firefly_sync_cli import FireflySyncCli
 from src.firefly_sync_daemon import FireflySyncDaemon
 
@@ -30,10 +31,16 @@ class MyFormatter(argparse.HelpFormatter):
             self._add_item(self._format_action, [action])
 
 
-def init_logging():
+def init_logging(env_mapper: EnvMapper):
     logging.basicConfig(format='[%(asctime)s %(name)s-%(threadName)s %(levelname)s] %(message)s',
                         level=logging.INFO)
-    logging.getLogger('urllib3.connectionpool').setLevel(logging.DEBUG)
+    logging_def_str = env_mapper.get('LOGGING')
+    if logging_def_str is None:
+        return
+
+    logging_def_list = [tuple(item.split(':')) for item in logging_def_str.split(',') if len(item.split(':')) == 2]
+    for logger_name, level in logging_def_list:
+        logging.getLogger(logger_name).setLevel(level)
 
 
 def get_help_format(prog):
@@ -41,7 +48,7 @@ def get_help_format(prog):
 
 
 if __name__ == "__main__":
-    init_logging()
+    init_logging(EnvMapper())
 
     parser = argparse.ArgumentParser(formatter_class=get_help_format)
     parser.add_argument("--dry-run",

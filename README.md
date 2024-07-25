@@ -63,6 +63,8 @@ The script currently supports 4 operations:
 - `DAEMON_CRON_ENABLED` Enable or disable the cron job of Firefly;
 - `DAEMON_CRON_CLI_TOKEN` Command line token Token retrieved from 'Profile / Command line token' in your Firefly instance;
 - `DAEMON_CRON_EXPRESSION` Cron expression that will dictate how frequently the call to Firefly is made.
+- `LOGGING` Logging string that will active a specific level for a specific logger (e.g. "urllib3.connectionpool:DEBUG,root:INFO")
+)
 
 ## Custom transactions
 
