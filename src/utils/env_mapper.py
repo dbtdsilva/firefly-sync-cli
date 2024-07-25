@@ -7,7 +7,7 @@ import os
 
 class EnvMapper():
 
-    def __init__(self, expected_keys: Dict[str, str]) -> None:
+    def __init__(self, expected_keys: Dict[str, str] = dict()) -> None:
         self.env_values = self.__load_env_variables(expected_keys)
 
     def get(self, key) -> str:

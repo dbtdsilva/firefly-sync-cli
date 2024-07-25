@@ -1,5 +1,7 @@
 import argparse
+import inspect
 import logging
+import sys
 from datetime import datetime
 
 from src.utils.env_mapper import EnvMapper
@@ -7,33 +9,24 @@ from src.firefly_sync_cli import FireflySyncCli
 from src.firefly_sync_daemon import FireflySyncDaemon
 
 
-class MyFormatter(argparse.HelpFormatter):
-    """
-    Corrected _max_action_length for the indenting of subactions
-    """
-    def add_argument(self, action):
-        if action.help is not argparse.SUPPRESS:
-            # find all invocations
-            get_invocation = self._format_action_invocation
-            invocations = [get_invocation(action)]
-            current_indent = self._current_indent
-            for subaction in self._iter_indented_subactions(action):
-                # compensate for the indent that will be added
-                indent_chg = self._current_indent - current_indent
-                added_indent = 'x'*indent_chg
-                invocations.append(added_indent+get_invocation(subaction))
-
-            invocation_length = max([len(s) for s in invocations])
-            action_length = invocation_length + self._current_indent
-            self._action_max_length = max(self._action_max_length,
-                                          action_length)
-            # add the item to the list
-            self._add_item(self._format_action, [action])
-
-
 def init_logging(env_mapper: EnvMapper):
+    class LoggingModuleNameFilter(logging.Filter):
+        def filter(self, record):
+            frame = inspect.currentframe().f_back
+            while frame is not None:
+                module = inspect.getmodule(frame)
+                if module and module != logging:
+                    record.name = module.__name__
+                    break
+                frame = frame.f_back
+            return True
+
+    handler = logging.StreamHandler(sys.stdout)
+    handler.addFilter(LoggingModuleNameFilter())
     logging.basicConfig(format='[%(asctime)s %(name)s-%(threadName)s %(levelname)s] %(message)s',
-                        level=logging.INFO)
+                        level=logging.INFO,
+                        handlers=[handler])
+
     logging_def_str = env_mapper.get('LOGGING')
     if logging_def_str is None:
         return
@@ -44,12 +37,33 @@ def init_logging(env_mapper: EnvMapper):
 
 
 def get_help_format(prog):
+    class MyFormatter(argparse.HelpFormatter):
+        """
+        Corrected _max_action_length for the indenting of subactions
+        """
+        def add_argument(self, action):
+            if action.help is not argparse.SUPPRESS:
+                # find all invocations
+                get_invocation = self._format_action_invocation
+                invocations = [get_invocation(action)]
+                current_indent = self._current_indent
+                for subaction in self._iter_indented_subactions(action):
+                    # compensate for the indent that will be added
+                    indent_chg = self._current_indent - current_indent
+                    added_indent = 'x'*indent_chg
+                    invocations.append(added_indent+get_invocation(subaction))
+
+                invocation_length = max([len(s) for s in invocations])
+                action_length = invocation_length + self._current_indent
+                self._action_max_length = max(self._action_max_length, action_length)
+                # add the item to the list
+                self._add_item(self._format_action, [action])
+
     return MyFormatter(prog, max_help_position=100)
 
 
 if __name__ == "__main__":
     init_logging(EnvMapper())
-
     parser = argparse.ArgumentParser(formatter_class=get_help_format)
     parser.add_argument("--dry-run",
                         action='store_false',
