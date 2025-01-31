@@ -45,7 +45,7 @@ class FireflySyncDaemon():
                          {self.env_mapper.get("DAEMON_FIREFLY_CRON_EXPRESSION")})')
             firefly_scheduler = BackgroundScheduler()
             firefly_scheduler.add_job(
-                self.firefly_sync_cli.create_firefly_cron_job, 'firefly_cron',
+                self.firefly_sync_cli.create_firefly_cron_job, 'cron',
                 args=[self.env_mapper.get("DAEMON_FIREFLY_CRON_CLI_TOKEN")],
                 **{part: value for part, value in zip(["minute", "hour", "day", "month", "day_of_week"],
                                                       self.env_mapper.get("DAEMON_FIREFLY_CRON_EXPRESSION").split())})
@@ -56,7 +56,7 @@ class FireflySyncDaemon():
                          {self.env_mapper.get("DAEMON_STOCK_CRON_EXPRESSION")})')
             stock_scheduler = BackgroundScheduler()
             stock_scheduler.add_job(
-                self.firefly_sync_cli.create_firefly_cron_job, 'stock_cron',
+                self.firefly_sync_cli.create_firefly_cron_job, 'cron',
                 **{part: value for part, value in zip(["minute", "hour", "day", "month", "day_of_week"],
                                                       self.env_mapper.get("DAEMON_STOCK_CRON_EXPRESSION").split())})
             stock_scheduler.start()
