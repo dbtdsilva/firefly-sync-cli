@@ -135,43 +135,36 @@ class StocksAccountService(BaseService):
         return self.__get_stock_price(date, label, currency)
 
     def __get_stock_price(self, date: datetime, ticker: str, currency: str) -> float:
-        stock = yf.Ticker(ticker)
-        stock_info = stock.info
-        exchange_tz = stock_info.get('exchangeTimezoneName', 'UTC')
-        tz = pytz.timezone(exchange_tz)
-        localized_date = tz.localize(date)
-        start_date = localized_date - timedelta(days=7)
-        end_date = localized_date + timedelta(days=1)
-
-        stock_currency = stock_info.get("currency")
+        stock_ticker = yf.Ticker(ticker)
+        stock_currency = stock_ticker.info.get("currency")
         if stock_currency is None:
             raise ValueError(f"Failed to retrieve currency for {ticker}")
 
-        data = stock.history(start=start_date.strftime('%Y-%m-%d'),
-                             end=end_date.strftime('%Y-%m-%d'),
-                             interval="1d")
-        if data.empty:
-            raise ValueError(f"No data found for {ticker} around {localized_date.date()}")
-
-        # Localize the data index to the exchange's timezone
-        data.index = data.index.tz_convert(tz)
-
-        # Filter data to include only entries up to the target date
-        valid_data = data[data.index <= localized_date]
-        if valid_data.empty:
-            raise ValueError(f"No data found for {ticker} on or before {localized_date.date()}")
-
-        closing_price = float(valid_data["Close"].iloc[-1])
-        closing_datetime = valid_data.index.max()
+        closing_price, closing_datetime = self.__get_ticker_data(stock_ticker, date)
         return closing_price * self.__get_exchange_rate(stock_currency, currency, closing_datetime)
 
     def __get_exchange_rate(self, source_currency: str, destination_currency: str, date: datetime):
         if source_currency == destination_currency:
             return 1
 
-        fx_ticker = f"{source_currency}{destination_currency}=X"  # Example: 'EURUSD=X' for USD to EUR
-        fx_data = yf.Ticker(fx_ticker).history(start=date, end=date, interval="1d")
-        if fx_data.empty:
-            raise ValueError(f"No exchange rate found for {source_currency} to {destination_currency} on {date}")
-        exchange_rate = float(fx_data["Close"].iloc[0])
-        return exchange_rate
+        fx_ticker = yf.Ticker(f"{source_currency}{destination_currency}=X")  # Example: 'EURUSD=X' for USD to EUR
+        return self.__get_ticker_data(fx_ticker, date)[0]
+
+    def __get_ticker_data(self, ticker: yf.Ticker, date: datetime) -> Tuple[float, datetime]:
+        ticker_tz = ticker.info.get('exchangeTimezoneName', 'UTC')
+        tz = pytz.timezone(ticker_tz)
+        localized_date = tz.localize(date)
+        start_date = localized_date - timedelta(days=7)
+        end_date = localized_date + timedelta(days=1)
+
+        data = ticker.history(start=start_date.strftime('%Y-%m-%d'),
+                              end=end_date.strftime('%Y-%m-%d'),
+                              interval="1d")
+        if data.empty:
+            raise ValueError(f"No data found for {ticker} around {localized_date.date()}")
+        data.index = data.index.tz_convert(tz)
+        ticker_data = data[data.index <= localized_date]
+        if ticker_data.empty:
+            raise ValueError(f"No data found for {ticker} on or before {localized_date.date()}")
+
+        return float(ticker_data["Close"].iloc[-1]), ticker_data.index.max()
