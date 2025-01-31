@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v1.5.2 (2025-01-31)
+
+### Bug Fixes
+
+- Updated cronjob to call the proper function
+  ([`9d31d51`](https://github.com/dbtdsilva/firefly-sync-cli/commit/9d31d51d3d987608386f56e22dbad05cd32228d1))
+
+
 ## v1.5.1 (2025-01-31)
 
 ### Bug Fixes
