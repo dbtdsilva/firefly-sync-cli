@@ -9,4 +9,11 @@ COPY src /app/src
 
 RUN pip install -r requirements.txt
 
-CMD ["sh", "-c", "if [ \"$DAEMON_CRON_ENABLED\" = true ] || [ \"$DAEMON_CRON_ENABLED\" = 1]; then python app.py daemon; else python app.py daemon --no-cron-job; fi"]
+CMD ["sh", "-c", "args=daemon; \
+  if [ \"$DAEMON_FIREFLY_CRON_ENABLED\" != true ] && [ \"$DAEMON_FIREFLY_CRON_ENABLED\" != 1 ]; then \
+    args=\"$args --no-firefly-cron-job\"; \
+  fi; \
+  if [ \"$DAEMON_STOCK_CRON_ENABLED\" != true ] && [ \"$DAEMON_STOCK_CRON_ENABLED\" != 1 ]; then \
+    args=\"$args --no-stock-cron-job\"; \
+  fi; \
+  python app.py $args"]

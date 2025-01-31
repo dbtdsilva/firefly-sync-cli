@@ -18,9 +18,11 @@ firefly-sync-cli:
         - FIREFLY_URL=<YOUR_FIREFLY_URL>
         - FIREFLY_TOKEN=<YOUR_TOKEN_HERE>
         - DAEMON_WATCHER_PATH=/app/uploads
-        - DAEMON_CRON_ENABLED=true
-        - DAEMON_CRON_CLI_TOKEN=<YOUR_CLI_TOKEN>
-        - DAEMON_CRON_EXPRESSION=0 0 * * *
+        - DAEMON_FIREFLY_CRON_ENABLED=true
+        - DAEMON_FIREFLY_CRON_CLI_TOKEN=<YOUR_CLI_TOKEN>
+        - DAEMON_FIREFLY_CRON_EXPRESSION=0 0 * * *
+        - DAEMON_STOCK_CRON_ENABLED=true
+        - DAEMON_STOCK_CRON_EXPRESSION=0 0 * * *
     volumes:
         - <YOUR_PATH_FOR_UPLOADS>:/app/uploads
     restart: always
@@ -60,9 +62,11 @@ The script currently supports 4 operations:
 - `FIREFLY_URL` This indicates the URL to your Firefly III instance;
 - `FIREFLY_TOKEN` Personal Access Token retrieved from 'Profile / OAuth / PAT' in your Firefly instance;
 - `DAEMON_WATCHER_PATH` Location where you want to import your bank transaction files;
-- `DAEMON_CRON_ENABLED` Enable or disable the cron job of Firefly;
-- `DAEMON_CRON_CLI_TOKEN` Command line token Token retrieved from 'Profile / Command line token' in your Firefly instance;
-- `DAEMON_CRON_EXPRESSION` Cron expression that will dictate how frequently the call to Firefly is made.
+- `DAEMON_FIREFLY_CRON_ENABLED` Enable or disable the cron job of Firefly;
+- `DAEMON_FIREFLY_CRON_CLI_TOKEN` Command line token Token retrieved from 'Profile / Command line token' in your Firefly instance;
+- `DAEMON_FIREFLY_CRON_EXPRESSION` Cron expression that will dictate how frequently the call to Firefly is made.
+- `DAEMON_STOCK_CRON_ENABLED` Enable or disable the cron job to update stock accounts with market values;
+- `DAEMON_STOCK_CRON_EXPRESSION` Cron expression that will dictate how frequently the accounts with stocks will update its market values;
 - `LOGGING` Logging string that will active a specific level for a specific logger (e.g. "urllib3.connectionpool:DEBUG,root:INFO")
 )
 
@@ -79,9 +83,9 @@ firefly-sync-cli:
         - FIREFLY_URL=<YOUR_FIREFLY_URL>
         - FIREFLY_TOKEN=<YOUR_TOKEN_HERE>
         - DAEMON_WATCHER_PATH=/app/uploads
-        - DAEMON_CRON_ENABLED=true
-        - DAEMON_CRON_CLI_TOKEN=<YOUR_CLI_TOKEN>
-        - DAEMON_CRON_EXPRESSION=0 0 * * *
+        - DAEMON_FIREFLY_CRON_ENABLED=true
+        - DAEMON_FIREFLY_CRON_CLI_TOKEN=<YOUR_CLI_TOKEN>
+        - DAEMON_FIREFLY_CRON_EXPRESSION=0 0 * * *
     volumes:
         - <YOUR_PATH_FOR_REPO>:/app
     restart: always

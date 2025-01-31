@@ -2,9 +2,11 @@ import logging
 from typing import Any, List
 from datetime import datetime
 
+
 from .firefly_api.api import FireflyApi
 from .utils.env_mapper import EnvMapper
 from .services.categorization_service import CategorizationService
+from .services.stocks_account_service import StocksAccountService
 from .services.transaction_import_service import TransactionImportService
 from .services.transaction_link_service import TransactionLinkService
 
@@ -21,9 +23,13 @@ class FireflySyncCli:
         self.api = FireflyApi(env_values.get("FIREFLY_URL"), env_values.get("FIREFLY_TOKEN"))
         self.dry_run = dry_run
 
-    def create_cron_job(self, cli_token) -> Any:
+    def create_firefly_cron_job(self, cli_token) -> Any:
         data = self.api.cron.create_cron_job(cli_token)
-        logging.info(f'Cron job run sucessfully: {data}')
+        logging.info(f'Firefly internal cron job run sucessfully: {data}')
+
+    def update_stock_accounts(self) -> Any:
+        StocksAccountService(self.api, self.dry_run).update_all()
+        logging.info('Updated stock accounts sucessfully')
 
     def categorize(self, start_date: datetime = None, end_date: datetime = None, account_ids: List[str] = None):
         CategorizationService(self.api, self.dry_run).interactive_categorize(

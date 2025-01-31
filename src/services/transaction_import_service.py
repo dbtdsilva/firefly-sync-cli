@@ -111,10 +111,10 @@ class TransactionImportService(BaseService):
 
         match = None
         for account in accounts:
-            pattern = r"sync:\s*([^,]+),([^,\n]+)\s*$"
+            pattern = r"sync_file:\s*([^,]+),([^,\n]+)\s*$"
             sync_note = re.search(pattern, account.notes, re.MULTILINE)
             if not sync_note:
-                logging.warning(f'Skipping account match, no notes with sync: {accounts[0].name}')
+                logging.warning(f'Skipping account match, no notes with sync: {account.name}')
                 continue
 
             match_filename = sync_note.group(1).strip()
