@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v1.5.1 (2025-01-31)
+
+### Bug Fixes
+
+- Renamed keys to cron
+  ([`a1ac160`](https://github.com/dbtdsilva/firefly-sync-cli/commit/a1ac160c0242d0e0e69d401242caf424dfe6bd74))
+
+
 ## v1.5.0 (2025-01-31)
 
 ### Features
