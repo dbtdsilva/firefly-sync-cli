@@ -41,8 +41,8 @@ class FireflySyncDaemon():
         observer.start()
 
         if not self.disable_firefly_cron_job:
-            logging.info(f'Adding firefly cronjob to the job list (expression: \
-                         {self.env_mapper.get("DAEMON_FIREFLY_CRON_EXPRESSION")})')
+            logging.info(f'Adding firefly cronjob to the job list (expression: '
+                         f'{self.env_mapper.get("DAEMON_FIREFLY_CRON_EXPRESSION")})')
             firefly_scheduler = BackgroundScheduler()
             firefly_scheduler.add_job(
                 self.firefly_sync_cli.create_firefly_cron_job, 'cron',
@@ -52,11 +52,11 @@ class FireflySyncDaemon():
             firefly_scheduler.start()
 
         if not self.disable_stock_cron_job:
-            logging.info(f'Adding stock update cronjob to the job list (expression: \
-                         {self.env_mapper.get("DAEMON_STOCK_CRON_EXPRESSION")})')
+            logging.info(f'Adding stock update cronjob to the job list (expression: '
+                         f'{self.env_mapper.get("DAEMON_STOCK_CRON_EXPRESSION")})')
             stock_scheduler = BackgroundScheduler()
             stock_scheduler.add_job(
-                self.firefly_sync_cli.create_firefly_cron_job, 'cron',
+                self.firefly_sync_cli.update_stock_accounts, 'cron',
                 **{part: value for part, value in zip(["minute", "hour", "day", "month", "day_of_week"],
                                                       self.env_mapper.get("DAEMON_STOCK_CRON_EXPRESSION").split())})
             stock_scheduler.start()
