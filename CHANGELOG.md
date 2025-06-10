@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v1.5.3 (2025-01-31)
+
+### Bug Fixes
+
+- Exchange rates are closed on weekend, closest open interval is fetched
+  ([`bb7f3f2`](https://github.com/dbtdsilva/firefly-sync-cli/commit/bb7f3f2fe36e2a9a7b6bc2295dd8852455db603d))
+
+
 ## v1.5.2 (2025-01-31)
 
 ### Bug Fixes
