@@ -7,4 +7,4 @@ pydantic==2.5.3
 openpyxl==3.1.2
 watchdog==4.0.0
 apscheduler==3.10.4
-yfinance==0.2.62
+yfinance==0.2.66

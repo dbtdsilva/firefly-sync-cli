@@ -25,7 +25,7 @@ class Account(BaseModel):
     bic: Optional[str]
     account_number: Optional[str]
     opening_balance: Optional[str]
-    current_debt: Optional[str]
+    debt_amount: Optional[str]
     opening_balance_date: Optional[datetime]
     virtual_balance: Optional[str]
     include_net_worth: Optional[bool]
@@ -39,3 +39,4 @@ class Account(BaseModel):
     latitude: Optional[float]
     longitude: Optional[float]
     zoom_level: Optional[int]
+    last_activity: Optional[datetime]
