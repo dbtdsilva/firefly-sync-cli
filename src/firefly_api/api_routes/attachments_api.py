@@ -2,7 +2,6 @@
 from requests import session
 from .base_api import BaseApi
 from ..models.attachment import Attachment
-import csv
 
 
 class AttachmentsApi(BaseApi):
