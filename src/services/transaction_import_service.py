@@ -4,6 +4,7 @@ from datetime import datetime, date as dt
 import re
 import os
 import logging
+import mimetypes
 import importlib
 import base64
 
@@ -173,7 +174,10 @@ class TransactionImportService(BaseService):
             date=dt.today(),
             description=f'Imported file "{file}" to the account "{account.name}" (from {start_date} to {end_date})'))
 
+        mimetype, _ = mimetypes.guess_type(file)
         self.api.attachments.create_attachment(
             attachment=Attachment(filename=os.path.basename(file), attachable_type=AttachableType.TAG, attachable_id=tag.id),
-            data=open(file, 'rb').read())
+            data=open(file, 'rb').read(),
+            mimetype=mimetype
+        )
         return tag

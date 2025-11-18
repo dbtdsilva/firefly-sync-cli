@@ -57,11 +57,10 @@ class BaseApi(ABC):
             response.raise_for_status()
         return response.json()
 
-    def _internal_post_with_files(self, endpoint, data):
-        response = self.session.post(self.__url(endpoint), data=data, headers={
-            'Content-Type': 'application/octet-stream',
-            'Authorization': f'Bearer {self.token}'
-        })
+    def _internal_post_with_files(self, endpoint, data, mimetype):
+        response = self.session.post(self.__url(endpoint),
+                                     files={'file': ('attachment', data, mimetype)},
+                                     headers={'Authorization': f'Bearer {self.token}'})
         if response.status_code != 204:
             logging.error(f'Failed to POST {endpoint}, received {response.status_code}: {response.json()}')
             response.raise_for_status()
